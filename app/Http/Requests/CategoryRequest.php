@@ -1,3 +1,4 @@
+<?php
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -19,20 +20,41 @@ class CategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $categoryId = $this->route('category'); // Assumes the route model binding or 'category' is the URL parameter name
-
+        $categoryId = $this->route('category') ? $this->route('category')->id : null;
         return [
             'name' => [
                 'required',
                 'string',
+                'min:3',
                 'max:255',
                 'unique:categories,name,' . ($categoryId ?? 'NULL') . ',id',
             ],
             'slug' => [
-                'required',
+                'nullable',
                 'string',
+                'max:255',
                 'unique:categories,slug,' . ($categoryId ?? 'NULL') . ',id',
             ],
+            'description' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+            'image' => [
+                'nullable',
+                'image', 
+                'mimes:jpeg,png,jpg,gif', 
+                'max:2048', // Maximum file size: 2MB
+            ],
+            'parent_id' => [
+                'nullable',
+                'exists:categories,id', // Ensure parent category exists
+            ],
+            'status' => [
+                'nullable',
+                'boolean', // Must be true or false
+            ],
         ];
+
     }
 }
