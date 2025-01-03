@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\BrandController;
  
 Route::group([
     'middleware' => 'api',
@@ -25,4 +26,15 @@ Route::group([
     Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
     Route::put('/{category}', [CategoryController::class, 'update']); // Update a specific category
     Route::delete('/{category}', [CategoryController::class, 'destroy']); // Delete a specific category
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'brands'
+], function () {
+    Route::get('/', [BrandController::class, 'index']); // Get all categories
+    Route::post('/', [BrandController::class, 'store']); // Create a new category
+    Route::get('/{brand}', [BrandController::class, 'show']); // Get a specific category
+    Route::put('/{brand}', [BrandController::class, 'update']); // Update a specific category
+    Route::delete('/{brand}', [BrandController::class, 'destroy']); // Delete a specific category
 });
