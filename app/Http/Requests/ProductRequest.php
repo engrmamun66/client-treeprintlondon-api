@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BrandRequest extends FormRequest
+class ProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,20 +21,38 @@ class BrandRequest extends FormRequest
      */
     public function rules(): array
     {
-        $brandId = $this->route('brand') ? $this->route('brand')->id : null;
+        $productId = $this->route('product') ? $this->route('product')->id : null;
         return [
+
             'name' => [
                 'required',
                 'string',
                 'min:3',
                 'max:255',
-                'unique:brands,name,' . ($brandId ?? 'NULL') . ',id',
+                'unique:products,name,' . ($productId ?? 'NULL') . ',id',
             ],
             'slug' => [
                 'nullable',
                 'string',
                 'max:255',
-                'unique:brands,slug,' . ($brandId ?? 'NULL') . ',id',
+                'unique:products,slug,' . ($productId ?? 'NULL') . ',id',
+            ],
+            'sku' => [
+                'nullable',
+                'string',
+                'max:255',
+                'unique:products,sku,' . ($productId ?? 'NULL') . ',id',
+            ],
+            'category_id' => [
+                'required',
+            ],
+            'brand_id' => [
+                'required',
+            ],
+            'description' => [
+                'nullable',
+                'string',
+                'max:1000',
             ],
             'image' => [
                 'nullable',
