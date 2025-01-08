@@ -27,11 +27,24 @@ class CategoryController extends BaseController
             return $this->sendError($e, ["Line- ".$e->getLine().' '.$e->getMessage()], 500);
         }
     }
+    public function parentCategoryDropdownList()
+    {
+        try {
+            $categories = Category::select('id', 'name')
+            ->whereNull('parent_id') // Correct column for parent categories
+            ->get();
+            // Return paginated response
+            return $this->sendResponse($categories, 'Parent category list retrieved successfully.');
+
+        } catch (Exception $e) {
+            return $this->sendError($e, ["Line- ".$e->getLine().' '.$e->getMessage()], 500);
+        }
+    }
     public function show($id)
     {
         try {
             // Find the category by ID
-            $category = Category::find($id);
+            $category = Category::with('children')->find($id);
     
             // Check if the category exists
             if (!$category) {

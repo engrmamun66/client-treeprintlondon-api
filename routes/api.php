@@ -23,10 +23,12 @@ Route::group([
     'prefix' => 'categories'
 ], function () {
     Route::get('/', [CategoryController::class, 'index']); // Get all categories
+    Route::get('/parent-category-list', [CategoryController::class, 'parentCategoryDropdownList']); // Get all categories
     Route::post('/', [CategoryController::class, 'store']); // Create a new category
     Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
     Route::put('/{category}', [CategoryController::class, 'update']); // Update a specific category
     Route::delete('/{category}', [CategoryController::class, 'destroy']); // Delete a specific category
+    
 });
 
 Route::group([
