@@ -26,7 +26,7 @@ class Category extends Model
     public function getImageUrlAttribute()
     {
         return $this->image 
-            ? Storage::disk('public')->url($this->image) 
+            ? asset('storage/' . $this->image)
             : null;
     }
 }
