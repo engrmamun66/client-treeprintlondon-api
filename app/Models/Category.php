@@ -8,6 +8,8 @@ class Category extends Model
 {
     protected $fillable = ['name', 'slug', 'description', 'image', 'parent_id', 'status'];
 
+    protected $appends = ['image_url'];
+    
     // Define the parent category relationship
     public function parent()
     {
@@ -18,5 +20,12 @@ class Category extends Model
     public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image 
+            ? Storage::disk('public')->url($this->image) 
+            : null;
     }
 }
