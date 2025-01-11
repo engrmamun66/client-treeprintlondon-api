@@ -6,6 +6,8 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\BrandController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\ColorController;
+use App\Http\Controllers\API\SizeController;
  
 Route::group([
     'middleware' => 'api',
@@ -51,4 +53,26 @@ Route::group([
     Route::get('/{product}', [ProductController::class, 'show']); // Get a specific category
     Route::put('/{product}', [ProductController::class, 'update']); // Update a specific category
     Route::delete('/{product}', [ProductController::class, 'destroy']); // Delete a specific category
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'colors'
+], function () {
+    Route::get('/', [ColorController::class, 'index']); // Get all categories
+    Route::post('/', [ColorController::class, 'store']); // Create a new category
+    Route::get('/{color}', [ColorController::class, 'show']); // Get a specific category
+    Route::put('/{color}', [ColorController::class, 'update']); // Update a specific category
+    Route::delete('/{color}', [ColorController::class, 'destroy']); // Delete a specific category
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'sizes'
+], function () {
+    Route::get('/', [SizeController::class, 'index']); // Get all categories
+    Route::post('/', [SizeController::class, 'store']); // Create a new category
+    Route::get('/{size}', [SizeController::class, 'show']); // Get a specific category
+    Route::put('/{size}', [SizeController::class, 'update']); // Update a specific category
+    Route::delete('/{size}', [SizeController::class, 'destroy']); // Delete a specific category
 });
