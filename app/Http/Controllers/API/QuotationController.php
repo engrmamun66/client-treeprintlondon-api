@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Quotation;
 use App\Models\QuotationFile;
-use App\Http\Requests\BrandRequest;
+use App\Http\Requests\QuotationRequest;
 use App\Traits\FileUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
