@@ -8,6 +8,8 @@ use App\Http\Controllers\API\BrandController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\ColorController;
 use App\Http\Controllers\API\SizeController;
+use App\Http\Controllers\API\QuotationController;
+
  
 Route::group([
     'middleware' => 'api',
@@ -75,4 +77,13 @@ Route::group([
     Route::get('/{size}', [SizeController::class, 'show']); // Get a specific category
     Route::put('/{size}', [SizeController::class, 'update']); // Update a specific category
     Route::delete('/{size}', [SizeController::class, 'destroy']); // Delete a specific category
+});
+
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'quotations'
+], function () {
+    Route::get('/', [QuotationController::class, 'index']); // Get all categories
+    Route::post('/', [QuotationController::class, 'store']); // Create a new category
+    Route::get('/{quotation}', [QuotationController::class, 'show']); // Get a specific category
 });
