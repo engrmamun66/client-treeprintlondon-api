@@ -83,7 +83,7 @@ Route::group([
     'middleware' => ['api'],
     'prefix' => 'quotations'
 ], function () {
-    Route::get('/', [QuotationController::class, 'index']); // Get all categories
+    Route::post('/', [QuotationController::class, 'store']); // Create a new category
 });
 Route::group([
     'middleware' => ['api', 'auth:api'],
