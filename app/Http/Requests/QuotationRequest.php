@@ -55,7 +55,7 @@ class QuotationRequest extends FormRequest
             'files.*' => [
                 'nullable',
                 'file',
-                'mimes:jpeg,png,jpg,gif,pdf', // Allowed file types
+                'mimes:jpeg,png,jpg,gif,pdf,doc,docx', // Allowed file types
                 'max:10000', // Maximum file size: 2MB
             ],
         ];
@@ -73,7 +73,7 @@ class QuotationRequest extends FormRequest
             'email.required' => 'The email is required.',
             'email.email' => 'The email must be a valid email address.',
             'phone.required' => 'The phone number is required.',
-            'files.*.mimes' => 'Each file must be a file of type: jpeg, png, jpg, gif, pdf.',
+            'files.*.mimes' => 'Each file must be a file of type: jpeg, png, jpg, gif, pdf, doc.',
             'files.*.max' => 'Each file may not be greater than 2MB.',
         ];
     }

@@ -14,4 +14,9 @@ class Quotation extends Model
             $quotation->uuid = (string) Str::random(12); // Automatically generate a UUID
         });
     }
+    public function files()
+    {
+        return $this->hasMany(QuotationFile::class);
+    }
+   
 }

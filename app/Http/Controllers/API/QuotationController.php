@@ -25,10 +25,10 @@ class QuotationController extends BaseController
             $perPage = $request->per_page ?? 15;
 
             // Fetch paginated brands
-            $brands = Quotation::orderBy('id', 'DESC')->paginate($perPage);
+            $quotations = Quotation::with('files')->orderBy('id', 'DESC')->paginate($perPage);
 
             // Return paginated response
-            return $this->sendResponse($brands, 'Quotation list retrieved successfully.');
+            return $this->sendResponse($quotations, 'Quotation list retrieved successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
@@ -38,7 +38,7 @@ class QuotationController extends BaseController
     {
         try {
             // Find the brand by ID
-            $quotation = Quotation::find($id);
+            $quotation = Quotation::with('files')->find($id);
 
             // Check if the brand exists
             if (!$quotation) {
@@ -81,6 +81,20 @@ class QuotationController extends BaseController
             Mail::to($mailData->email)->send(new QuotationEmailToCustomer($mailData));
     
             return $this->sendResponse($quotation, 'Quotation created successfully.', 201);
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+    public function update(Request $request, Quotation $quotation)
+    {
+        try {
+            $validated = $request->validate([
+                'status' => 'required|numeric|min:1|max:4',
+            ]);
+           $quotation->status = $request->status;
+           $quotation->save();
+            // Return the brand data
+            return $this->sendResponse($quotation, 'Status updated successfully.', 200);
         } catch (\Exception $e) {
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }

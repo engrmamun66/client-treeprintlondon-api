@@ -14,4 +14,8 @@ class QuotationFile extends Model
             ? asset('storage/' . $this->file)
             : null;
     }
+    public function quotation()
+    {
+        return $this->belongsTo(Quotation::class);
+    }
 }
