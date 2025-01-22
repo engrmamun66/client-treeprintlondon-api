@@ -10,6 +10,9 @@ use App\Traits\FileUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Mail;
+use App\Mail\QuotationEmailToAdmin; 
+use App\Mail\QuotationEmailToCustomer; 
 
 class QuotationController extends BaseController
 {
@@ -72,6 +75,9 @@ class QuotationController extends BaseController
                     ]);
                 }
             }
+            $mailData = $quotation;
+            Mail::to('rabbimahmud95@gmail.com')->send(new QuotationEmailToAdmin($mailData));
+            Mail::to($mailData->email)->send(new QuotationEmailToCustomer($mailData));
     
             return $this->sendResponse($quotation, 'Quotation created successfully.', 201);
         } catch (\Exception $e) {

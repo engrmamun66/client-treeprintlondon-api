@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('quotations', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->tinyInteger('type_of_service')->default(3)->comment('1 = same day delivery, 2 = Next day delivery, 3 = Standard Delivery (3-7 Days)');
             $table->string('delivery_date')->nullable();
             $table->string('full_name');
