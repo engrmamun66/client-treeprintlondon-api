@@ -72,6 +72,7 @@ class QuotationController extends BaseController
                     $filePath = $this->FileUpload($file, 'quotation'); // Call your custom upload function
                     QuotationFile::create([
                         'file' => $filePath,
+                        'quotation_id' => $quotation->id
                     ]);
                 }
             }
