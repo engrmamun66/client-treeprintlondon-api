@@ -11,7 +11,7 @@ class Quotation extends Model
     protected static function booted()
     {
         static::creating(function ($quotation) {
-            $quotation->uuid = (string) Str::random(8); // Automatically generate a UUID
+            $quotation->uuid = (string) Str::random(12); // Automatically generate a UUID
         });
     }
 }

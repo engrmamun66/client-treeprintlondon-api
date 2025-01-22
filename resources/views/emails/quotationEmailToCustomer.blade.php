@@ -86,22 +86,23 @@
 <body>
 <div class="email-container">
     <div class="email-header">
-        <img src="https://admin.ionicrentals.com/img/logo.png" alt="IONIC Rentals Logo">
+        <img src="{{ asset('images/logo.png') }}" alt="IONIC Rentals Logo">
     </div>
 
     <div class="email-content">
-    <p>Hello {{ $mailData['full_name'] }},</p>
+    <p>Here’s the revised version with your new tagline:</p>
+    <p>Dear {{ $mailData['full_name'] }},</p>
 
-        <p>A new quotation has been received. Below are the details:</p>
+        <p>Thank you for your interest. We have received your quotation request, and here are the details:</p>
         <ul>
+            <li><strong>Quotation reference:</strong> {{ $mailData['uuid'] }}</li>
             <li><strong>Name:</strong> {{ $mailData['full_name'] }}</li>
             <li><strong>Email:</strong> {{ $mailData['email'] }}</li>
             <li><strong>Phone:</strong> {{ $mailData['phone'] }}</li>
         </ul>
-        <p>We will contact with you soon</p>
-        <p>We want you to love using the Tee Print London app. If you have any questions or need assistance, don’t hesitate to reach out to our support team at
-            [<a href="mailto:support@teeprintlondon.com">support@teeprintlondon.com</a>]—we’re here to help every step of the way!</p>
-
+        <p>Our team will be in touch with you shortly.</p>
+        <p>We hope you enjoy using the Tee Print London app. Should you have any questions or wish to discuss your thoughts directly, feel free to call us at +44 7888 185120 or contact our support team at  [<a href="mailto:support@teeprintlondon.com">support@teeprintlondon.com</a>]. We are here to assist you every step of the way.</p>
+        <strong>Your Vision, Our Expertise – You Choose, We Design.</strong>
         <p>Best regards,</p>
         <p>The Tee Print London Team</p>
     </div>
