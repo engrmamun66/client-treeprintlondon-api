@@ -86,7 +86,7 @@
 <body>
 <div class="email-container">
     <div class="email-header">
-        <img src="{{ asset('https://uc80b437a491c790b5ce059245c4.previews.dropboxusercontent.com/p/thumb/AChqrCDYIp_8LEOpGMFPbu82K58jKQZIhGsISzYHJquEGnMmaF1Ni8-WuNTkgFS3qeLlmjEpHVa-mqk2XqzvLm-1U8JVaaSFw7upNOHpyg0qZ2-Hs9etwnCAcmXHZnWKTcpwBB2Fxvi539CV_4E8QXPBEYQbr5ZMnEe1PyGwTLpI753-nxTYF8mCXsqPNDUyAimeD-Jeessfg6QxjCoIDk-r-tajvk8MNHPmU8leDxuuepzwUyxrGh3cd3CSdYSIASC9lwM4DhWblGPXiAj0-VNzJbJiMdSTKpiusYA1PTFWbyLAyDsGMwgf2cJseYgMMOwouBg8GpnfjHXwCul1L0HNCaD00g2Pz6qgD8uT7KKC0pDjp5_cFR851hI3SuKckvwlnybZBKDL9dwHLMCqAE5S/p.jpeg?is_prewarmed=true') }}" alt="Tee Print Logo" style="border-radius: 15px;height: 150px; width: 150px;">
+        <img src="{{ asset('https://res.cloudinary.com/dyfnpakfq/image/upload/v1737653056/NnZbENb4_pgjaw2.jpg') }}" alt="Tee Print Logo" style="border-radius: 15px;height: 150px; width: 150px;">
     </div>
 
     <div class="email-content">
