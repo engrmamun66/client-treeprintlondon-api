@@ -100,4 +100,47 @@ class QuotationController extends BaseController
         }
     }
 
+    public function destroy($id)
+    {
+        try {
+            // Find the quotation by ID
+            $quotation = Quotation::with('files')->find($id);
+
+            // Check if the quotation exists
+            if (!$quotation) {
+                return $this->sendError('Quotation not found.', [], 404);
+            }
+
+            // Delete associated files
+            foreach ($quotation->files as $file) {
+                if (Storage::exists($file->file)) {
+                    Storage::delete($file->file);
+                }
+                $file->delete();
+            }
+
+            // Delete the quotation
+            $quotation->delete();
+
+            return $this->sendResponse([], 'Quotation deleted successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+    public function downloadFile($fileId)
+    {
+        $file = QuotationFile::find($fileId);
+
+        // Check if the file exists in the database and storage
+        if (!$file || !Storage::disk('public')->exists($file->file)) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+
+        // Return the file as a download response
+        return Storage::disk('public')->download($file->file);
+    }
+
+
+
+
 }
