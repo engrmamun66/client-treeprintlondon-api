@@ -77,8 +77,8 @@ class QuotationController extends BaseController
                 }
             }
             $mailData = $quotation;
-            Mail::to('rabbimahmud95@gmail.com')->send(new QuotationEmailToAdmin($mailData));
-            Mail::to($mailData->email)->send(new QuotationEmailToCustomer($mailData));
+            // Mail::to('rabbimahmud95@gmail.com')->send(new QuotationEmailToAdmin($mailData));
+            // Mail::to($mailData->email)->send(new QuotationEmailToCustomer($mailData));
     
             return $this->sendResponse($quotation, 'Quotation created successfully.', 201);
         } catch (\Exception $e) {
@@ -111,9 +111,10 @@ class QuotationController extends BaseController
                 return $this->sendError('Quotation not found.', [], 404);
             }
 
+            
             // Delete associated files
             foreach ($quotation->files as $file) {
-                if (Storage::exists($file->file)) {
+                if (Storage::disk('public')->exists($file->file)) {
                     Storage::delete($file->file);
                 }
                 $file->delete();
