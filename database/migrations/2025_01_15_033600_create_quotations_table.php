@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('phone');
             $table->text('requirements')->nullable();
+            $table->text('note')->nullable();
             $table->tinyInteger('status')->default(1)->comment('1 = pending, 2 = processing, 3 = completed, 4 = cancelled');
             $table->timestamps();
         });

@@ -76,8 +76,9 @@ class QuotationController extends BaseController
                     ]);
                 }
             }
+            $quotation = Quotation::with('files')->find( $quotation->id);
             $mailData = $quotation;
-            // Mail::to('rabbimahmud95@gmail.com')->send(new QuotationEmailToAdmin($mailData));
+            Mail::to('rabbimahmud95@gmail.com')->send(new QuotationEmailToAdmin($mailData));
             // Mail::to($mailData->email)->send(new QuotationEmailToCustomer($mailData));
     
             return $this->sendResponse($quotation, 'Quotation created successfully.', 201);
@@ -91,7 +92,8 @@ class QuotationController extends BaseController
             $validated = $request->validate([
                 'status' => 'required|numeric|min:1|max:4',
             ]);
-           $quotation->status = $request->status;
+           $quotation->status = $request->status ?? null;
+           $quotation->status = $request->note ?? null;
            $quotation->save();
             // Return the brand data
             return $this->sendResponse($quotation, 'Status updated successfully.', 200);
@@ -115,7 +117,7 @@ class QuotationController extends BaseController
             // Delete associated files
             foreach ($quotation->files as $file) {
                 if (Storage::disk('public')->exists($file->file)) {
-                    Storage::delete($file->file);
+                    Storage::disk('public')->delete($file->file);
                 }
                 $file->delete();
             }

@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-
+use Illuminate\Mail\Mailables\Attachment;
 class QuotationEmailToAdmin extends Mailable
 {
     use Queueable, SerializesModels;
@@ -50,6 +50,13 @@ class QuotationEmailToAdmin extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        $attachments = [];
+
+        // Add each file as an attachment
+        foreach ($this->mailData['files'] as $file) {
+            $attachments[] = Attachment::fromStorageDisk('public', $file['file']);
+        }
+
+        return $attachments;
     }
 }
