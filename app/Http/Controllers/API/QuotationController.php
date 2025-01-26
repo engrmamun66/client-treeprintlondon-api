@@ -93,7 +93,7 @@ class QuotationController extends BaseController
                 'status' => 'required|numeric|min:1|max:4',
             ]);
            $quotation->status = $request->status ?? null;
-           $quotation->status = $request->note ?? null;
+           $quotation->note = $request->note ?? null;
            $quotation->save();
             // Return the brand data
             return $this->sendResponse($quotation, 'Status updated successfully.', 200);
