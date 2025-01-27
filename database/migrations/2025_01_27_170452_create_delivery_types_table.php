@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sizes', function (Blueprint $table) {
+        Schema::create('delivery_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->decimal('chest_round', 5, 2); // Chest (Round) with 2 decimal places
-            $table->decimal('length', 5, 2); // Length with 2 decimal places
-            $table->decimal('sleeve', 5, 2); // Sleeve with 2 decimal places
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sizes');
+        Schema::dropIfExists('delivery_types');
     }
 };
