@@ -14,15 +14,11 @@ class BrandController extends BaseController
 {
     use FileUpload;
 
-    public function index(Request $request)
+    public function index()
     {
         try {
-            // Get the 'perPage' parameter from the request, default to 15
-            $perPage = $request->per_page ?? 15;
-
             // Fetch paginated brands
-            $brands = Brand::orderBy('id', 'DESC')->paginate($perPage);
-
+            $brands = Brand::orderBy('id', 'DESC')->get();
             // Return paginated response
             return $this->sendResponse($brands, 'Brand list retrieved successfully.');
         } catch (\Exception $e) {

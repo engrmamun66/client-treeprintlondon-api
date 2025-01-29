@@ -10,14 +10,11 @@ use Illuminate\Http\Request;
 class SizeController extends BaseController
 {
 
-    public function index(Request $request)
+    public function index()
     {
         try {
-            // Get the 'perPage' parameter from the request, default to 15
-            $perPage = $request->per_page ?? 15;
-
             // Fetch paginated brands
-            $sizes = Size::orderBy('id', 'DESC')->paginate($perPage);
+            $sizes = Size::orderBy('id', 'DESC')->get();
 
             // Return paginated response
             return $this->sendResponse($sizes, 'Size list retrieved successfully.');

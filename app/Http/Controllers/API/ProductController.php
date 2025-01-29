@@ -66,6 +66,33 @@ class ProductController extends BaseController
             $validatedData['status'] = $validatedData['status'] ?? true;
 
             $product = Product::create($validatedData);
+             // Handle product sizes
+            $sizes = json_decode($request->sizes, true);
+            if (is_array($sizes)) {
+                foreach ($sizes as $size) {
+                    if (isset($size['id'], $size['quantity'], $size['unit_price'])) {
+                        ProductSize::create([
+                            'product_id' => $product->id,
+                            'size_id' => $size['id'],
+                            'quantity' => $size['quantity'],
+                            'unit_price' => $size['unit_price']
+                        ]);
+                    }
+                }
+            }
+
+            // Handle product colors
+            $colors = json_decode($request->colors, true);
+            if (is_array($colors)) {
+                foreach ($colors as $color) {
+                    if (isset($color['id'])) {
+                        ProductColor::create([
+                            'product_id' => $product->id,
+                            'color_id' => $color['id']
+                        ]);
+                    }
+                }
+            }
 
             return $this->sendResponse($product, 'Product created successfully.', 201);
         } catch (\Exception $e) {

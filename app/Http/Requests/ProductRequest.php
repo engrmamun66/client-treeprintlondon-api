@@ -43,13 +43,14 @@ class ProductRequest extends FormRequest
                 'max:255',
                 'unique:products,sku,' . ($productId ?? 'NULL') . ',id',
             ],
-            'category_id' => [
-                'required',
+            'category_id' => ['required', 'exists:categories,id'],
+            'brand_id' => ['required', 'exists:brands,id'],
+            'short_description' => [
+                'nullable',
+                'string',
+                'max:1000',
             ],
-            'brand_id' => [
-                'required',
-            ],
-            'description' => [
+            'long_description' => [
                 'nullable',
                 'string',
                 'max:1000',
@@ -64,6 +65,8 @@ class ProductRequest extends FormRequest
                 'nullable',
                 'boolean', // Must be true or false
             ],
+            'sizes' => ['nullable', 'json'],
+            'colors' => ['nullable', 'json'],
         ];
     }
 }

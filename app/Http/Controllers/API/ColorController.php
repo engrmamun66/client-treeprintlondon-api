@@ -10,16 +10,10 @@ use Illuminate\Http\Request;
 class ColorController extends BaseController
 {
 
-    public function index(Request $request)
+    public function index()
     {
         try {
-            // Get the 'perPage' parameter from the request, default to 15
-            $perPage = $request->per_page ?? 15;
-
-            // Fetch paginated brands
-            $colors = Color::orderBy('id', 'DESC')->paginate($perPage);
-
-            // Return paginated response
+            $colors = Color::orderBy('name', 'ASC')->get();
             return $this->sendResponse($colors, 'Color list retrieved successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
