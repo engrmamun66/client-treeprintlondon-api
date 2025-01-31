@@ -6,6 +6,10 @@ use App\Http\Controllers\API\BaseController as BaseController;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Models\ProductSize;
+use App\Models\ProductColor;
+use App\Models\ProductGender;
 Use App\Http\Requests\ProductRequest;
 use App\Traits\FileUpload;
 use Illuminate\Support\Str;
@@ -104,6 +108,19 @@ class ProductController extends BaseController
                 }
             }
 
+            // Handle product colors
+            $genders = json_decode($request->genders, true);
+            if (is_array($genders)) {
+                foreach ($genders as $gender) {
+                    if (isset($gender)) {
+                        ProductGender::create([
+                            'product_id' => $product->id,
+                            'gender_id' => $gender
+                        ]);
+                    }
+                }
+            }
+
             return $this->sendResponse($product, 'Product created successfully.', 201);
         } catch (\Exception $e) {
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
@@ -183,6 +200,21 @@ class ProductController extends BaseController
                         ProductColor::create([
                             'product_id' => $product->id,
                             'color_id' => $color,
+                        ]);
+                    }
+                }
+            }
+
+            // Handle product colors
+            $genders = json_decode($request->genders, true);
+            if (is_array($genders)) {
+                // Delete existing colors for the product
+                $product->genders()->delete();
+                foreach ($genders as $gender) {
+                    if (isset($gender)) {
+                        ProductGender::create([
+                            'product_id' => $product->id,
+                            'gender_id' => $gender
                         ]);
                     }
                 }
