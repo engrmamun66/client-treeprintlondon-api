@@ -50,22 +50,32 @@ class ProductController extends BaseController
             if (isset($validatedData['name'])) {
                 $validatedData['slug'] = Str::slug($validatedData['name']);
             }
-            if ($request->hasFile('image')) {
+            if ($request->hasFile('thumbnail_image')) {
                 
-                $originalImage = $request->file('image');
+                $originalImage = $request->file('thumbnail_image');
                 
                 // Store the original image in public disk
-                $originalPath = $this->FileUpload($originalImage, 'product/original');
+                // $originalPath = $this->FileUpload($originalImage, 'product/original');
 
                 // Store the thumbnail image (150x150) in public disk
                 $thumbnailPath = $this->FileUpload($originalImage, 'product/thumbnail', [150, 150]);
 
-                $validatedData['original_image'] = $originalPath;
+                // $validatedData['original_image'] = $originalPath;
                 $validatedData['thumbnail_image'] = $thumbnailPath;
             }
             $validatedData['status'] = $validatedData['status'] ?? true;
 
             $product = Product::create($validatedData);
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $this->FileUpload($image, 'product/images'); // Call your custom upload function
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => $imagePath
+                    ]);
+                }
+            }
              // Handle product sizes
             $sizes = json_decode($request->sizes, true);
             if (is_array($sizes)) {
@@ -85,10 +95,10 @@ class ProductController extends BaseController
             $colors = json_decode($request->colors, true);
             if (is_array($colors)) {
                 foreach ($colors as $color) {
-                    if (isset($color['id'])) {
+                    if (isset($color)) {
                         ProductColor::create([
                             'product_id' => $product->id,
-                            'color_id' => $color['id']
+                            'color_id' => $color
                         ]);
                     }
                 }
@@ -105,30 +115,79 @@ class ProductController extends BaseController
         try {
             $validatedData = $request->validated();
 
+            // Generate slug from the product name if it's updated
             if (isset($validatedData['name'])) {
                 $validatedData['slug'] = Str::slug($validatedData['name']);
             }
 
-            if ($request->hasFile('image')) {
-                if ($product->original_image) {
-                    Storage::delete($product->original_image);
-                }
+            // Handle thumbnail image upload
+            if ($request->hasFile('thumbnail_image')) {
+                // Delete the old thumbnail image if it exists
                 if ($product->thumbnail_image) {
                     Storage::delete($product->thumbnail_image);
                 }
-    
-                $originalImage = $request->file('image');
 
-                // Store the original image in public disk
-                $originalPath = $this->FileUpload($originalImage, 'product/original');
+                // Upload the new thumbnail image
+                $thumbnailImage = $request->file('thumbnail_image');
+                $thumbnailPath = $this->FileUpload($thumbnailImage, 'product/thumbnail', [150, 150]);
 
-                // Store the thumbnail image (150x150) in public disk
-                $thumbnailPath = $this->FileUpload($originalImage, 'product/thumbnail', [150, 150]);
-
-                $validatedData['original_image'] = $originalPath;
                 $validatedData['thumbnail_image'] = $thumbnailPath;
             }
+
+            // Set default status if not provided
+            $validatedData['status'] = $validatedData['status'] ?? true;
+
+            // Update the product with validated data
             $product->update($validatedData);
+
+            // Handle additional images
+            if ($request->hasFile('images')) {
+                // Upload and save new additional images
+                foreach ($request->file('images') as $image) {
+                    $imagePath = $this->FileUpload($image, 'product/images');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => $imagePath,
+                    ]);
+                }
+            }
+
+            // Handle product sizes
+            $sizes = json_decode($request->sizes, true);
+            if (is_array($sizes)) {
+                // Delete existing sizes for the product
+                $product->sizes()->delete();
+
+                // Create new sizes
+                foreach ($sizes as $size) {
+                    if (isset($size['id'], $size['quantity'], $size['unit_price'])) {
+                        ProductSize::create([
+                            'product_id' => $product->id,
+                            'size_id' => $size['id'],
+                            'quantity' => $size['quantity'],
+                            'unit_price' => $size['unit_price'],
+                        ]);
+                    }
+                }
+            }
+
+            // Handle product colors
+            $colors = json_decode($request->colors, true);
+            if (is_array($colors)) {
+                // Delete existing colors for the product
+                $product->colors()->delete();
+
+                // Create new colors
+                foreach ($colors as $color) {
+                    if (isset($color)) {
+                        ProductColor::create([
+                            'product_id' => $product->id,
+                            'color_id' => $color,
+                        ]);
+                    }
+                }
+            }
+
             return $this->sendResponse($product, 'Product updated successfully.');
         } catch (\Exception $e) {
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
