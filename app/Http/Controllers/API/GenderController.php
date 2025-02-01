@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Gender;
 
-class SizeController extends BaseController
+class GenderController extends BaseController
 {
 
     public function index()
