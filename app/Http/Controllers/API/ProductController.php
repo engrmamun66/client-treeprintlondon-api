@@ -231,6 +231,13 @@ class ProductController extends BaseController
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
+    public function deleteImage($id){
+        $productImage = ProductImage::find($id);
+        if (Storage::disk('public')->exists($productImage->image)) {
+            Storage::disk('public')->delete($productImage->image);
+        }
+        $productImage->delete();
+    }
 
     public function destroy(Product $product)
     {

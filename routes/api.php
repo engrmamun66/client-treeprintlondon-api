@@ -56,6 +56,7 @@ Route::group([
     Route::get('/{product}', [ProductController::class, 'show']); // Get a specific category
     Route::put('/{product}', [ProductController::class, 'update']); // Update a specific category
     Route::delete('/{product}', [ProductController::class, 'destroy']); // Delete a specific category
+    Route::get('/image/{id}/delete', [ProductController::class, 'deleteImage']);
 });
 
 Route::group([
