@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersTableSeeder::class,
             SizesTableSeeder::class,
-            DeliveryTypesTableSeeder::class
+            DeliveryTypesTableSeeder::class,
+            GenderTableSeeder::class
         ]);
     }
 }

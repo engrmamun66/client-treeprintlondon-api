@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    protected $appends = ['thumbnail_image_url'];
     protected $fillable = [
-        'name', 'sku', 'category_id', 'brand_id', 'slug', 'thumbnail_image', 'status'
+        'name', 'sku', 'category_id', 'brand_id', 'slug', 'thumbnail_image', 'short_description', 'long_description', 'status'
     ];
     public function images()
     {
@@ -24,5 +25,12 @@ class Product extends Model
     public function genders()
     {
         return $this->hasMany(ProductGender::class);
+    }
+   
+    public function getThumbnailImageUrlAttribute()
+    {
+        return $this->thumbnail_image 
+            ? asset('storage/' . $this->thumbnail_image)
+            : null;
     }
 }

@@ -14,6 +14,7 @@ Use App\Http\Requests\ProductRequest;
 use App\Traits\FileUpload;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends BaseController
 {
@@ -34,7 +35,7 @@ class ProductController extends BaseController
     public function show($id)
     {
         try {
-            $product = Product::find($id);
+            $product = Product::with(['colors','sizes','genders','images'])->find($id);
 
             if (!$product) {
                 return $this->sendError('Product not found.', [], 404);
@@ -48,6 +49,7 @@ class ProductController extends BaseController
 
     public function store(ProductRequest $request)
     {
+        DB::beginTransaction();
         try {
             $validatedData = $request->validated();
 
@@ -82,6 +84,7 @@ class ProductController extends BaseController
             }
              // Handle product sizes
             $sizes = json_decode($request->sizes, true);
+            
             if (is_array($sizes)) {
                 foreach ($sizes as $size) {
                     if (isset($size['id'], $size['quantity'], $size['unit_price'])) {
@@ -97,6 +100,8 @@ class ProductController extends BaseController
 
             // Handle product colors
             $colors = json_decode($request->colors, true);
+           
+
             if (is_array($colors)) {
                 foreach ($colors as $color) {
                     if (isset($color)) {
@@ -120,9 +125,10 @@ class ProductController extends BaseController
                     }
                 }
             }
-
+            DB::commit();
             return $this->sendResponse($product, 'Product created successfully.', 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('sku')->unique();
             $table->text('short_description')->nullable();
             $table->text('long_description')->nullable();
-            $table->string('original_image')->nullable();
             $table->string('thumbnail_image')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
