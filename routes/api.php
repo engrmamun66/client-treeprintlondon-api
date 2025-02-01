@@ -9,6 +9,7 @@ use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\ColorController;
 use App\Http\Controllers\API\SizeController;
 use App\Http\Controllers\API\QuotationController;
+use App\Http\Controllers\API\GenderController;
 
  
 Route::group([
@@ -73,10 +74,20 @@ Route::group([
     'prefix' => 'sizes'
 ], function () {
     Route::get('/', [SizeController::class, 'index']); // Get all categories
-    Route::post('/', [SizeController::class, 'store']); // Create a new category
-    Route::get('/{size}', [SizeController::class, 'show']); // Get a specific category
-    Route::put('/{size}', [SizeController::class, 'update']); // Update a specific category
-    Route::delete('/{size}', [SizeController::class, 'destroy']); // Delete a specific category
+    // Route::post('/', [SizeController::class, 'store']); // Create a new category
+    // Route::get('/{size}', [SizeController::class, 'show']); // Get a specific category
+    // Route::put('/{size}', [SizeController::class, 'update']); // Update a specific category
+    // Route::delete('/{size}', [SizeController::class, 'destroy']); // Delete a specific category
+});
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'genders'
+], function () {
+    Route::get('/', [GenderController::class, 'index']); // Get all categories
+    // Route::get('/{quotation}', [QuotationController::class, 'show']); // Get a specific category
+    // Route::put('/{quotation}', [QuotationController::class, 'update']); // Get a specific category
+    // Route::delete('/{quotation}', [QuotationController::class, 'destroy']); // Delete a specific category
+    // Route::get('/files/{id}/download', [QuotationController::class, 'downloadFile']);
 });
 
 Route::group([
