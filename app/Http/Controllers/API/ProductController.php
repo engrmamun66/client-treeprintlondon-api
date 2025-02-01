@@ -178,10 +178,8 @@ class ProductController extends BaseController
             // Handle product sizes
             $sizes = json_decode($request->sizes, true);
             if (is_array($sizes)) {
-                // Delete existing sizes for the product
-                $product->sizes()->delete();
+                $product->sizes()->delete(); // Delete old sizes
 
-                // Create new sizes
                 foreach ($sizes as $size) {
                     if (isset($size['id'], $size['quantity'], $size['unit_price'])) {
                         ProductSize::create([
@@ -197,12 +195,10 @@ class ProductController extends BaseController
             // Handle product colors
             $colors = json_decode($request->colors, true);
             if (is_array($colors)) {
-                // Delete existing colors for the product
-                $product->colors()->delete();
+                $product->colors()->delete(); // Delete old colors
 
-                // Create new colors
                 foreach ($colors as $color) {
-                    if (isset($color)) {
+                    if (!empty($color)) {
                         ProductColor::create([
                             'product_id' => $product->id,
                             'color_id' => $color,
@@ -211,16 +207,16 @@ class ProductController extends BaseController
                 }
             }
 
-            // Handle product colors
+            // Handle product genders
             $genders = json_decode($request->genders, true);
             if (is_array($genders)) {
-                // Delete existing colors for the product
-                $product->genders()->delete();
+                $product->genders()->delete(); // Delete old genders
+
                 foreach ($genders as $gender) {
-                    if (isset($gender)) {
+                    if (!empty($gender)) {
                         ProductGender::create([
                             'product_id' => $product->id,
-                            'gender_id' => $gender
+                            'gender_id' => $gender,
                         ]);
                     }
                 }

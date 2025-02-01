@@ -47,13 +47,13 @@ class ProductRequest extends FormRequest
                 'unique:products,slug,' . ($productId ?? 'NULL') . ',id',
             ],
 
-            // SKU
-            'sku' => [
-                'nullable',
-                'string',
-                'max:255',
-                'unique:products,sku,' . ($productId ?? 'NULL') . ',id',
-            ],
+            // // SKU
+            // 'sku' => [
+            //     'nullable',
+            //     'string',
+            //     'max:255',
+            //     'unique:products,sku,' . ($productId ?? 'NULL') . ',id',
+            // ],
 
             // Category and Brand
             'category_id' => ['required', 'exists:categories,id'],
@@ -115,8 +115,8 @@ class ProductRequest extends FormRequest
             'slug.unique' => 'The slug must be unique.',
             'slug.max' => 'The slug may not be greater than :max characters.',
 
-            'sku.unique' => 'The SKU must be unique.',
-            'sku.max' => 'The SKU may not be greater than :max characters.',
+            // 'sku.unique' => 'The SKU must be unique.',
+            // 'sku.max' => 'The SKU may not be greater than :max characters.',
 
             'category_id.required' => 'The category is required.',
             'category_id.exists' => 'The selected category is invalid.',
