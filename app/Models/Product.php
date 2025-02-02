@@ -16,6 +16,10 @@ class Product extends Model
             $product->sku = (string) Str::random(12); // Automatically generate a UUID
         });
     }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
     public function images()
     {
         return $this->hasMany(ProductImage::class);

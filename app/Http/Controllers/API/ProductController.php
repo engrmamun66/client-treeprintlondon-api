@@ -35,7 +35,7 @@ class ProductController extends BaseController
     public function show($id)
     {
         try {
-            $product = Product::with(['parent','colors','sizes','genders','images'])->find($id);
+            $product = Product::with(['category.parent','colors','sizes','genders','images'])->find($id);
 
             if (!$product) {
                 return $this->sendError('Product not found.', [], 404);
