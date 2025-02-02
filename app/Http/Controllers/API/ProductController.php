@@ -35,7 +35,7 @@ class ProductController extends BaseController
     public function show($id)
     {
         try {
-            $product = Product::with(['colors','sizes','genders','images'])->find($id);
+            $product = Product::with(['parent','colors','sizes','genders','images'])->find($id);
 
             if (!$product) {
                 return $this->sendError('Product not found.', [], 404);
@@ -233,6 +233,7 @@ class ProductController extends BaseController
             Storage::disk('public')->delete($productImage->image);
         }
         $productImage->delete();
+        return $this->sendResponse([], 'Image deleted successfully.');
     }
 
     public function destroy(Product $product)
