@@ -19,7 +19,7 @@ class CategoryController extends BaseController
             // Get the 'perPage' parameter from the request, default to 10
             $perPage  = $request->per_page ?? 15;
             // Fetch paginated categories
-            $categories = Category::orderBy('id', 'DESC')->paginate($perPage);
+            $categories = Category::with('parent')->orderBy('id', 'DESC')->paginate($perPage);
             // Return paginated response
             return $this->sendResponse($categories, 'Category list retrieved successfully.');
 

@@ -24,7 +24,7 @@ class ProductController extends BaseController
     {
         try {
             $perPage = $request->per_page ?? 15;
-            $products = Product::orderBy('id', 'DESC')->paginate($perPage);
+            $products = Product::with(['category.parent', 'brand'])->orderBy('id', 'DESC')->paginate($perPage);
 
             return $this->sendResponse($products, 'Product list retrieved successfully.');
         } catch (\Exception $e) {
@@ -239,17 +239,36 @@ class ProductController extends BaseController
     public function destroy(Product $product)
     {
         try {
-            if ($product->original_image) {
-                Storage::delete($product->original_image);
-            }
-            if ($product->thumbnail_image) {
-                Storage::delete($product->thumbnail_image);
+            DB::beginTransaction();
+
+            // Delete associated images
+            foreach ($product->images as $image) {
+                if (Storage::disk('public')->exists($image->image)) {
+                    Storage::disk('public')->delete($image->image);
+                }
+                $image->delete();
             }
 
+            // Delete associated sizes, colors, and genders
+            $product->sizes()->delete();
+            $product->colors()->delete();
+            $product->genders()->delete();
+
+            // Delete product images
+            if ($product->original_image && Storage::exists($product->original_image)) {
+                Storage::disk('public')->delete($product->original_image);
+            }
+            if ($product->thumbnail_image && Storage::exists($product->thumbnail_image)) {
+                Storage::disk('public')->delete($product->thumbnail_image);
+            }
+
+            // Delete the product
             $product->delete();
 
+            DB::commit();
             return $this->sendResponse(null, 'Product deleted successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
