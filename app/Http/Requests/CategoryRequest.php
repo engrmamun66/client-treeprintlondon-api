@@ -50,9 +50,9 @@ class CategoryRequest extends FormRequest
                 'nullable',
                 'exists:categories,id', // Ensure parent category exists
             ],
-            'is_popular_product' => [
+            'type' => [
                 'nullable',
-                'boolean', // Must be true or false
+                'integer', // Must be true or false
             ],
             'status' => [
                 'nullable',
