@@ -28,7 +28,7 @@ Route::group([
     'middleware' => ['api'],
     'prefix' => 'categories'
 ], function () {
-    Route::post('/type/{type}', [CategoryController::class, 'showCategoryDetailsByType']); // Create a new category
+    Route::get('/type/{type}', [CategoryController::class, 'showCategoryDetailsByType']); // Create a new category
    
 });
 
