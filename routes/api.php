@@ -23,6 +23,15 @@ Route::group([
     Route::post('/profile', [AuthController::class, 'profile'])->middleware('auth:api');
 });
 
+
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'categories'
+], function () {
+    Route::post('/type/{type}', [CategoryController::class, 'showCategoryDetailsByType']); // Create a new category
+   
+});
+
 Route::group([
     'middleware' => ['api', 'auth:api'],
     'prefix' => 'categories'
@@ -48,6 +57,13 @@ Route::group([
 });
 
 Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'products'
+], function () {
+    Route::get('/search', [ProductController::class, 'search']); // Get all categories
+});
+
+Route::group([
     'middleware' => ['api', 'auth:api'],
     'prefix' => 'products'
 ], function () {
@@ -58,6 +74,8 @@ Route::group([
     Route::delete('/{product}', [ProductController::class, 'destroy']); // Delete a specific category
     Route::get('/image/{id}/delete', [ProductController::class, 'deleteImage']);
 });
+
+
 
 Route::group([
     'middleware' => ['api', 'auth:api'],
@@ -98,6 +116,7 @@ Route::group([
     Route::post('/', [QuotationController::class, 'store']); // Create a new category
    
 });
+
 Route::group([
     'middleware' => ['api', 'auth:api'],
     'prefix' => 'quotations'

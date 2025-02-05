@@ -58,6 +58,24 @@ class CategoryController extends BaseController
         }
     }
 
+    public function showCategoryDetailsByType($type)
+    {
+        try {
+            // Find the category by ID
+            $category = Category::with('children')->where('type', $type)->first();
+    
+            // Check if the category exists
+            if (!$category) {
+                return $this->sendError('Category not found.', [], 404);
+            }
+    
+            // Return the category data
+            return $this->sendResponse($category, 'Category found.');
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+
     public function store(CategoryRequest $request)
     {
         try{

@@ -31,6 +31,21 @@ class ProductController extends BaseController
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
+    public function search(Request $request)
+    {
+        try {
+            $search = $request->search; // Get the search term
+    
+            $products = Product::with(['category.parent', 'brand'])
+                ->where('name', 'LIKE', "%$search%")
+                ->orderBy('id', 'DESC')
+                ->get(); // No pagination
+    
+            return $this->sendResponse($products, 'Product list retrieved successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
 
     public function show($id)
     {
