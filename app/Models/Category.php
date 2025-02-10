@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Category extends Model
 {
-    protected $fillable = ['name', 'slug', 'description', 'image', 'parent_id', 'type', 'status'];
+    protected $fillable = ['name', 'slug', 'description', 'image', 'parent_id', 'status'];
 
     protected $appends = ['image_url'];
 
@@ -21,6 +21,11 @@ class Category extends Model
     public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function types()
+    {
+        return $this->belongsToMany(Type::class);
     }
 
     public function getImageUrlAttribute()

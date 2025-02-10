@@ -95,8 +95,12 @@ class CategoryController extends BaseController
             if (!isset($validatedData['status'])) {
                 $validatedData['status'] = true; // Default to active
             }
-
             $category = Category::create($validatedData);
+
+            $types = $validatedData['types'] ?? [];
+            if (!empty($types)) {
+                $category->types()->sync($types);
+            }
             return $this->sendResponse($category, 'Category created successfully.', 201);
 
         } catch(\Exception $e){

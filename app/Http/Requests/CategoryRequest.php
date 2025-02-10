@@ -50,9 +50,9 @@ class CategoryRequest extends FormRequest
                 'nullable',
                 'exists:categories,id', // Ensure parent category exists
             ],
-            'type' => [
+            'types' => [
                 'nullable',
-                'integer', // Must be true or false
+                'json', // Must be true or false
             ],
             'status' => [
                 'nullable',
