@@ -8,7 +8,7 @@ class Product extends Model
 {
     protected $appends = ['thumbnail_image_url'];
     protected $fillable = [
-        'name', 'sku', 'category_id', 'brand_id', 'slug', 'thumbnail_image', 'short_description', 'long_description', 'status'
+        'name', 'sku', 'category_id', 'brand_id', 'slug', 'thumbnail_image', 'short_description', 'long_description', 'discount', 'status'
     ];
     protected static function booted()
     {
