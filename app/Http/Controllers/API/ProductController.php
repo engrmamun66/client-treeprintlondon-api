@@ -107,7 +107,8 @@ class ProductController extends BaseController
                             'product_id' => $product->id,
                             'size_id' => $size['id'],
                             'quantity' => $size['quantity'],
-                            'unit_price' => $size['unit_price']
+                            'unit_price' => $size['unit_price'],
+                            'discounted_unit_price' => $size['unit_price']- ($size['unit_price'] * $product->discount / 100)
                         ]);
                     }
                 }
@@ -202,6 +203,7 @@ class ProductController extends BaseController
                             'size_id' => $size['id'],
                             'quantity' => $size['quantity'],
                             'unit_price' => $size['unit_price'],
+                            'discounted_unit_price' => $size['unit_price']- ($size['unit_price'] * $product->discount / 100)
                         ]);
                     }
                 }
