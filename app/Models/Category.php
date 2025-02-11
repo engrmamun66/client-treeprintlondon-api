@@ -25,7 +25,7 @@ class Category extends Model
 
     public function types()
     {
-        return $this->belongsToMany(Type::class);
+        return $this->belongsToMany(Type::class, 'category_types');
     }
 
     public function getImageUrlAttribute()
