@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
   
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Category;
+use App\Models\CategoryType;
 Use App\Http\Requests\CategoryRequest;
 use Illuminate\Http\Request;
 use App\Traits\FileUpload;
