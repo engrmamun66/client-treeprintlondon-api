@@ -48,12 +48,9 @@ class ProductRequest extends FormRequest
             ],
 
             // // SKU
-            // 'sku' => [
-            //     'nullable',
-            //     'string',
-            //     'max:255',
-            //     'unique:products,sku,' . ($productId ?? 'NULL') . ',id',
-            // ],
+            'discount' => [
+                'nullable',
+            ],
 
             // Category and Brand
             'category_id' => ['required', 'exists:categories,id'],
