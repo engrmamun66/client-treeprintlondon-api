@@ -130,12 +130,6 @@ Route::group([
 });
 
 
-Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'types'
-], function () {
-    Route::get('/categories', [TypeController::class, 'getTypewiseCategoryList']); // Get all categories
-});
 
 Route::group([
     'middleware' => ['api'],
