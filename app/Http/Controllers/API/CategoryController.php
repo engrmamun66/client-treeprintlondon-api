@@ -97,10 +97,25 @@ class CategoryController extends BaseController
             }
             $category = Category::create($validatedData);
 
-            $types = $validatedData['types'] ?? [];
+            $types = json_decode($validatedData['types']) ?? [];
+            
             if (!empty($types)) {
                 $category->types()->sync($types);
             }
+
+            // // Handle product colors
+            // $types  = json_decode($request->types, true);
+
+            // if (is_array($types)) {
+            //     foreach ($types as $type) {
+            //         if (isset($type)) {
+            //             CategoryType::create([
+            //                 'category_id' => $category->id,
+            //                 'type_id' => $type
+            //             ]);
+            //         }
+            //     }
+            // }
             return $this->sendResponse($category, 'Category created successfully.', 201);
 
         } catch(\Exception $e){
