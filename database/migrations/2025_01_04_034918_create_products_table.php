@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('short_description')->nullable();
             $table->text('long_description')->nullable();
             $table->string('thumbnail_image')->nullable();
-            $table->decimal('discount', 10, 2)->nullable(); 
+            $table->decimal('discount', 10, 2)->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
 

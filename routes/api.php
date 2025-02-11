@@ -10,6 +10,7 @@ use App\Http\Controllers\API\ColorController;
 use App\Http\Controllers\API\SizeController;
 use App\Http\Controllers\API\QuotationController;
 use App\Http\Controllers\API\GenderController;
+use App\Http\Controllers\API\TypeController;
 
  
 Route::group([
