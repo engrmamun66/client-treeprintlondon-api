@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             SizesTableSeeder::class,
             DeliveryTypesTableSeeder::class,
-            GenderTableSeeder::class
+            GenderTableSeeder::class,
+            TypeTableSeeder::class
         ]);
     }
 }
