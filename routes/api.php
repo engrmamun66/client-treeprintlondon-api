@@ -117,6 +117,13 @@ Route::group([
 });
 
 Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'types'
+], function () {
+    Route::get('/', [TypeController::class, 'index']); // Get all categories
+});
+
+Route::group([
     'middleware' => ['api'],
     'prefix' => 'quotations'
 ], function () {
