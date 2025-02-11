@@ -24,7 +24,6 @@ Route::group([
     Route::post('/profile', [AuthController::class, 'profile'])->middleware('auth:api');
 });
 
-
 Route::group([
     'middleware' => ['api'],
     'prefix' => 'categories'
@@ -124,6 +123,12 @@ Route::group([
 ], function () {
     Route::get('/', [TypeController::class, 'index']); // Get all categories
 });
+Route::group([
+    'middleware' => ['api'],
+], function () {
+    Route::get('/type-wise-category-list', [TypeController::class, 'getTypewiseCategoryList']); // Get all categories
+});
+
 
 Route::group([
     'middleware' => ['api'],
