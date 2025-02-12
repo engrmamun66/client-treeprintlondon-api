@@ -12,7 +12,7 @@ use App\Http\Controllers\API\QuotationController;
 use App\Http\Controllers\API\GenderController;
 use App\Http\Controllers\API\TypeController;
 
- 
+//public
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
@@ -26,11 +26,45 @@ Route::group([
 
 Route::group([
     'middleware' => ['api'],
-    'prefix' => 'categories'
 ], function () {
-    Route::get('/type/{type}', [CategoryController::class, 'showCategoryDetailsByType']); // Create a new category
+    Route::get('/type-wise-category-list', [TypeController::class, 'getTypewiseCategoryList']); // Get all categories
+    Route::post('/filter-products', [ProductController::class, 'filterProducts']); 
+    Route::get('/search-products', [ProductController::class, 'search']);
+    
+});
+
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'quotations'
+], function () {
+    Route::post('/', [QuotationController::class, 'store']); // Create a new category
    
 });
+
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'categories'
+], function () {
+    Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
+});
+
+
+// Route::group([
+//     'middleware' => ['api'],
+//     'prefix' => 'categories'
+// ], function () {
+//     Route::get('/type/{type}', [CategoryController::class, 'showCategoryDetailsByType']); // Create a new category
+   
+// });
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'products'
+], function () {
+    // Get all categories
+    Route::get('/{product}', [ProductController::class, 'show']); // Get a specific category
+});
+
+//private
 
 
 
@@ -44,13 +78,18 @@ Route::group([
     // Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
     Route::put('/{category}', [CategoryController::class, 'update']); // Update a specific category
     Route::delete('/{category}', [CategoryController::class, 'destroy']); // Delete a specific category
-    
 });
+
 Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'categories'
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'products'
 ], function () {
-    Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
+    Route::get('/', [ProductController::class, 'index']); // Get all categories
+    Route::post('/', [ProductController::class, 'store']); // Create a new category
+    // Route::get('/{product}', [ProductController::class, 'show']); // Get a specific category
+    Route::put('/{product}', [ProductController::class, 'update']); // Update a specific category
+    Route::delete('/{product}', [ProductController::class, 'destroy']); // Delete a specific category
+    Route::get('/image/{id}/delete', [ProductController::class, 'deleteImage']);
 });
 
 Route::group([
@@ -63,27 +102,6 @@ Route::group([
     Route::put('/{brand}', [BrandController::class, 'update']); // Update a specific category
     Route::delete('/{brand}', [BrandController::class, 'destroy']); // Delete a specific category
 });
-
-Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'products'
-], function () {
-    Route::get('/search', [ProductController::class, 'search']); // Get all categories
-});
-
-Route::group([
-    'middleware' => ['api', 'auth:api'],
-    'prefix' => 'products'
-], function () {
-    Route::get('/', [ProductController::class, 'index']); // Get all categories
-    Route::post('/', [ProductController::class, 'store']); // Create a new category
-    Route::get('/{product}', [ProductController::class, 'show']); // Get a specific category
-    Route::put('/{product}', [ProductController::class, 'update']); // Update a specific category
-    Route::delete('/{product}', [ProductController::class, 'destroy']); // Delete a specific category
-    Route::get('/image/{id}/delete', [ProductController::class, 'deleteImage']);
-});
-
-
 
 Route::group([
     'middleware' => ['api', 'auth:api'],
@@ -111,10 +129,6 @@ Route::group([
     'prefix' => 'genders'
 ], function () {
     Route::get('/', [GenderController::class, 'index']); // Get all categories
-    // Route::get('/{quotation}', [QuotationController::class, 'show']); // Get a specific category
-    // Route::put('/{quotation}', [QuotationController::class, 'update']); // Get a specific category
-    // Route::delete('/{quotation}', [QuotationController::class, 'destroy']); // Delete a specific category
-    // Route::get('/files/{id}/download', [QuotationController::class, 'downloadFile']);
 });
 
 Route::group([
@@ -122,21 +136,6 @@ Route::group([
     'prefix' => 'types'
 ], function () {
     Route::get('/', [TypeController::class, 'index']); // Get all categories
-});
-Route::group([
-    'middleware' => ['api'],
-], function () {
-    Route::get('/type-wise-category-list', [TypeController::class, 'getTypewiseCategoryList']); // Get all categories
-});
-
-
-
-Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'quotations'
-], function () {
-    Route::post('/', [QuotationController::class, 'store']); // Create a new category
-   
 });
 
 Route::group([

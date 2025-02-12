@@ -46,7 +46,43 @@ class ProductController extends BaseController
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
+    public function filterProducts(Request $request)
+    {
+        try {
+            $query = Product::query();
 
+            // Filter by category IDs
+            if ($request->has('category_ids')) {
+                $query->whereIn('category_id', $request->category_ids);
+            }
+
+            // Filter by brand IDs
+            if ($request->has('brand_ids')) {
+                $query->whereIn('brand_id', $request->brand_ids);
+            }
+
+            // Filter by sizes (assuming there is a pivot table like product_sizes)
+            if ($request->has('size_ids')) {
+                $query->whereHas('sizes', function ($q) use ($request) {
+                    $q->whereIn('size_id', $request->size_ids);
+                });
+            }
+
+            // Filter by genders
+            if ($request->has('gender_ids')) {
+                $query->whereHas('genders', function ($q) use ($request) {
+                    $q->whereIn('gender_id', $request->gender_ids);
+                });
+            }
+
+            // Get filtered results
+            $products = $query->paginate(20);
+
+            return $this->sendResponse($products, 'Product list retrieved successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
     public function show($id)
     {
         try {
@@ -108,7 +144,7 @@ class ProductController extends BaseController
                             'size_id' => $size['id'],
                             'quantity' => $size['quantity'],
                             'unit_price' => $size['unit_price'],
-                            'discounted_unit_price' => $size['unit_price']- ($size['unit_price'] * $product->discount / 100)
+                            'discounted_unit_price' => $size['unit_price'] - ($size['unit_price'] * $product->discount / 100)
                         ]);
                     }
                 }
@@ -203,7 +239,7 @@ class ProductController extends BaseController
                             'size_id' => $size['id'],
                             'quantity' => $size['quantity'],
                             'unit_price' => $size['unit_price'],
-                            'discounted_unit_price' => $size['unit_price']- ($size['unit_price'] * $product->discount / 100)
+                            'discounted_unit_price' => $size['unit_price'] - ($size['unit_price'] * $product->discount / 100)
                         ]);
                     }
                 }
