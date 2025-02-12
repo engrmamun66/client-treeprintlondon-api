@@ -45,7 +45,7 @@ class CategoryController extends BaseController
     {
         try {
             // Find the category by ID
-            $category = Category::with(['children','types'])->find($id);
+            $category = Category::with(['children','types','products'])->find($id);
     
             // Check if the category exists
             if (!$category) {

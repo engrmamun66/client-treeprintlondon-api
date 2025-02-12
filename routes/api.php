@@ -41,12 +41,7 @@ Route::group([
    
 });
 
-Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'categories'
-], function () {
-    Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
-});
+
 
 
 // Route::group([
@@ -78,6 +73,13 @@ Route::group([
     // Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
     Route::put('/{category}', [CategoryController::class, 'update']); // Update a specific category
     Route::delete('/{category}', [CategoryController::class, 'destroy']); // Delete a specific category
+});
+
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'categories'
+], function () {
+    Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
 });
 
 Route::group([
