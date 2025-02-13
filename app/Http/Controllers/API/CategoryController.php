@@ -59,6 +59,25 @@ class CategoryController extends BaseController
         }
     }
 
+    public function categoryDetailsBySlug($slug)
+    {
+        try {
+            // Find the category by ID
+            $category = Category::with(['children','types','products'])->where('slug', $slug)->first();
+    
+            // Check if the category exists
+            if (!$category) {
+                return $this->sendError('Category not found.', [], 404);
+            }
+    
+            // Return the category data
+            return $this->sendResponse($category, 'Category found.');
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+
+
     public function showCategoryDetailsByType($type)
     {
         try {

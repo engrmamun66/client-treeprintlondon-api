@@ -52,11 +52,13 @@ Route::group([
    
 // });
 Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'products'
+    'middleware' => ['api']
+   
 ], function () {
     // Get all categories
-    Route::get('/{product}', [ProductController::class, 'show']); // Get a specific category
+    Route::get('product-details-by-slug/{slug}', [ProductController::class, 'productDetailsBySlug']); // Get a specific category
+    Route::get('category-details-by-slug/{slug}', [CategoryController::class, 'categoryDetailsBySlug']); // Get a specific category
+
 });
 
 //private
@@ -70,16 +72,9 @@ Route::group([
     Route::get('/', [CategoryController::class, 'index']); // Get all categories
     Route::get('/parent-category-list', [CategoryController::class, 'parentCategoryDropdownList']); // Get all categories
     Route::post('/', [CategoryController::class, 'store']); // Create a new category
-    // Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
+    Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
     Route::put('/{category}', [CategoryController::class, 'update']); // Update a specific category
     Route::delete('/{category}', [CategoryController::class, 'destroy']); // Delete a specific category
-});
-
-Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'categories'
-], function () {
-    Route::get('/{category}', [CategoryController::class, 'show']); // Get a specific category
 });
 
 Route::group([
@@ -88,7 +83,7 @@ Route::group([
 ], function () {
     Route::get('/', [ProductController::class, 'index']); // Get all categories
     Route::post('/', [ProductController::class, 'store']); // Create a new category
-    // Route::get('/{product}', [ProductController::class, 'show']); // Get a specific category
+    Route::get('/{product}', [ProductController::class, 'show']); // Get a specific category
     Route::put('/{product}', [ProductController::class, 'update']); // Update a specific category
     Route::delete('/{product}', [ProductController::class, 'destroy']); // Delete a specific category
     Route::get('/image/{id}/delete', [ProductController::class, 'deleteImage']);

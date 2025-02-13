@@ -97,6 +97,20 @@ class ProductController extends BaseController
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
+    function productDetailsBySlug($slug){
+        try {
+            $product = Product::with(['category.parent','colors','sizes','genders','images'])->where('slug', $slug)->first();
+
+            if (!$product) {
+                return $this->sendError('Product not found.', [], 404);
+            }
+
+            return $this->sendResponse($product, 'Product found.');
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+
+    }
 
     public function store(ProductRequest $request)
     {
