@@ -23,8 +23,16 @@ class ProductController extends BaseController
     public function index(Request $request)
     {
         try {
-            $perPage = $request->per_page ?? 15;
-            $products = Product::with(['category.parent', 'brand'])->orderBy('id', 'DESC')->paginate($perPage);
+            $perPage = $request->per_page ?? 20;
+            $query = Product::with(['category.parent', 'brand'])->orderBy('id', 'DESC');
+
+            // Apply search filter if 'search' query param is provided
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                $query->where('name', 'LIKE', "%{$searchTerm}%");
+            }
+
+            $products = $query->paginate($perPage);
 
             return $this->sendResponse($products, 'Product list retrieved successfully.');
         } catch (\Exception $e) {
@@ -80,6 +88,12 @@ class ProductController extends BaseController
                 $query->whereHas('genders', function ($q) use ($request) {
                     $q->whereIn('gender_id', $request->gender_ids);
                 });
+            }
+
+            // Search by product name (should be applied after other filters)
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                $query->where('name', 'LIKE', "%{$searchTerm}%");
             }
 
             // Get filtered results
@@ -143,6 +157,7 @@ class ProductController extends BaseController
                 $validatedData['thumbnail_image'] = $thumbnailPath;
             }
             $validatedData['status'] = $validatedData['status'] ?? true;
+            $validatedData['discounted_min_unit_price'] = $validatedData['min_unit_price'] - ( $validatedData['min_unit_price'] * $validatedData['discount'] / 100 );
 
             $product = Product::create($validatedData);
 
@@ -233,7 +248,7 @@ class ProductController extends BaseController
 
             // Set default status if not provided
             $validatedData['status'] = $validatedData['status'] ?? true;
-
+            $validatedData['discounted_min_unit_price'] = $validatedData['min_unit_price'] - ( $validatedData['min_unit_price'] * $validatedData['discount'] / 100 );
             // Update the product with validated data
             $product->update($validatedData);
 
