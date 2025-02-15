@@ -23,16 +23,40 @@ class ProductController extends BaseController
     public function index(Request $request)
     {
         try {
-            $perPage = $request->per_page ?? 20;
-            $query = Product::with(['category.parent', 'brand'])->orderBy('id', 'DESC');
+            $perPage = $request->per_page ?? 20; // Number of items per page (default: 20)
 
-            // Apply search filter if 'search' query param is provided
-            if ($request->has('search') && !empty($request->search)) {
-                $searchTerm = $request->search;
-                $query->where('name', 'LIKE', "%{$searchTerm}%");
+            // Build the query with eager loading
+            $query = Product::with(['category.parent', 'brand']);
+
+            // Filter by type (via category_types)
+            if ($typeId = $request->get('type_id')) {
+                $query->whereHas('category.type', function ($q) use ($typeId) {
+                    $q->where('types.id', $typeId);
+                });
             }
 
-            $products = $query->paginate($perPage);
+            // Filter by category ID
+            if ($categoryId = $request->get('category_id')) {
+                $query->whereHas('category', function ($q) use ($categoryId) {
+                    $q->where('id', $categoryId)
+                    ->orWhere('parent_id', $categoryId); // Include subcategories
+                });
+            }
+
+            // Filter by subcategory ID
+            if ($subcategoryId = $request->get('subcategory_id')) {
+                $query->whereHas('category', function ($q) use ($subcategoryId) {
+                    $q->where('id', $subcategoryId);
+                });
+            }
+
+            // Apply search filter if provided
+            if ($search = $request->get('search')) {
+                $query->where('name', 'LIKE', "%{$search}%");
+            }
+
+            // Order by ID (descending) and paginate
+            $products = $query->latest('id')->paginate($perPage);
 
             return $this->sendResponse($products, 'Product list retrieved successfully.');
         } catch (\Exception $e) {
