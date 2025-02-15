@@ -51,6 +51,9 @@ class ProductRequest extends FormRequest
             'discount' => [
                 'nullable',
             ],
+            'min_unit_price' => [
+                'required'
+            ],
 
             // Category and Brand
             'category_id' => ['required', 'exists:categories,id'],
@@ -130,6 +133,8 @@ class ProductRequest extends FormRequest
 
             'images.*.mimes' => 'The additional images must be of type: ' . self::ALLOWED_FILE_MIMES . '.',
             'images.*.max' => 'The additional images may not be greater than ' . self::MAX_FILE_SIZE . ' KB.',
+
+            'min_unit_price.required' => 'The minimum unit price  is required.',
         ];
     }
 
