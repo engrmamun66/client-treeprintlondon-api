@@ -157,7 +157,9 @@ class ProductController extends BaseController
                 $validatedData['thumbnail_image'] = $thumbnailPath;
             }
             $validatedData['status'] = $validatedData['status'] ?? true;
-            $validatedData['discounted_min_unit_price'] = $validatedData['min_unit_price'] - ( $validatedData['min_unit_price'] * $validatedData['discount'] / 100 );
+            if(isset($validatedData['discount'])){
+                $validatedData['discounted_min_unit_price'] = $validatedData['min_unit_price'] - ( $validatedData['min_unit_price'] * $validatedData['discount'] / 100 );
+            }
 
             $product = Product::create($validatedData);
 
@@ -248,7 +250,9 @@ class ProductController extends BaseController
 
             // Set default status if not provided
             $validatedData['status'] = $validatedData['status'] ?? true;
-            $validatedData['discounted_min_unit_price'] = $validatedData['min_unit_price'] - ( $validatedData['min_unit_price'] * $validatedData['discount'] / 100 );
+            if(isset($validatedData['discount'])){
+                $validatedData['discounted_min_unit_price'] = $validatedData['min_unit_price'] - ( $validatedData['min_unit_price'] * $validatedData['discount'] / 100 );
+            }
             // Update the product with validated data
             $product->update($validatedData);
 
