@@ -168,6 +168,7 @@ class CategoryController extends BaseController
             $types  = json_decode($request->types, true);
 
             if (is_array($types)) {
+                $category->types()->delete(); 
                 foreach ($types as $type) {
                     if (isset($type)) {
                         CategoryType::create([
