@@ -164,6 +164,19 @@ class CategoryController extends BaseController
 
             // Update the category with validated data
             $category->update($validatedData);
+             // // Handle product colors
+            $types  = json_decode($request->types, true);
+
+            if (is_array($types)) {
+                foreach ($types as $type) {
+                    if (isset($type)) {
+                        CategoryType::create([
+                            'category_id' => $category->id,
+                            'type_id' => $type
+                        ]);
+                    }
+                }
+            }
 
             return $this->sendResponse($category, 'Category updated successfully.', 200);
         } catch (\Exception $e) {
