@@ -32,6 +32,11 @@ class Category extends Model
         return $this->belongsToMany(Type::class, 'category_types');
     }
 
+    public function categoryTypes()
+    {
+        return $this->hasMany(CategoryType::class, 'category_id');
+    }
+
     public function getImageUrlAttribute()
     {
         return $this->image 
