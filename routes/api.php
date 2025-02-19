@@ -58,6 +58,8 @@ Route::group([
     // Get all categories
     Route::get('product-details-by-slug/{slug}', [ProductController::class, 'productDetailsBySlug']); // Get a specific category
     Route::get('category-details-by-slug/{slug}', [CategoryController::class, 'categoryDetailsBySlug']); // Get a specific category
+    Route::get('additional-data-for-product-filtering', [ProductController::class, 'additionalDataForProductFiltering']);
+    
 
 });
 
@@ -87,6 +89,8 @@ Route::group([
     Route::put('/{product}', [ProductController::class, 'update']); // Update a specific category
     Route::delete('/{product}', [ProductController::class, 'destroy']); // Delete a specific category
     Route::get('/image/{id}/delete', [ProductController::class, 'deleteImage']);
+    Route::post('/apply-discount', [ProductController::class, 'applyDiscount']); // Create a new category
+    
 });
 
 Route::group([

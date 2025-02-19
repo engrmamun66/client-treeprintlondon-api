@@ -6,6 +6,9 @@ use App\Http\Controllers\API\BaseController as BaseController;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Brand;
+use App\Models\Gender;
+use App\Models\DeliveryType;
 use App\Models\ProductImage;
 use App\Models\ProductSize;
 use App\Models\ProductColor;
@@ -157,6 +160,27 @@ class ProductController extends BaseController
         }
 
     }
+    function additionalDataForProductFiltering(){
+        try {
+            $brands = Brand::orderBy('id', 'ASC')->get();
+            $genders = Gender::orderBy('id', 'ASC')->get();
+            $deliveryTypes = DeliveryType::orderBy('id', 'ASC')->get();
+            $minPrice = Product::whereNotNull('min_unit_price')->min('min_unit_price');
+            $maxPrice = Product::whereNotNull('min_unit_price')->max('min_unit_price');
+            return $this->sendResponse(
+                [
+                    "brands" => $brands,
+                    "genders" => $genders,
+                    "min_price" => $minPrice,
+                    "max_price" => $maxPrice,
+                    'delivery_types' => $deliveryTypes
+                ], 
+                'Retrived data successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+
+    }
 
     public function store(ProductRequest $request)
     {
@@ -175,7 +199,7 @@ class ProductController extends BaseController
                 // $originalPath = $this->FileUpload($originalImage, 'product/original');
 
                 // Store the thumbnail image (150x150) in public disk
-                $thumbnailPath = $this->FileUpload($originalImage, 'product/thumbnail', [150, 150]);
+                $thumbnailPath = $this->FileUpload($originalImage, 'product/thumbnail', [300, 300]);
 
                 // $validatedData['original_image'] = $originalPath;
                 $validatedData['thumbnail_image'] = $thumbnailPath;
@@ -267,7 +291,7 @@ class ProductController extends BaseController
 
                 // Upload the new thumbnail image
                 $thumbnailImage = $request->file('thumbnail_image');
-                $thumbnailPath = $this->FileUpload($thumbnailImage, 'product/thumbnail', [150, 150]);
+                $thumbnailPath = $this->FileUpload($thumbnailImage, 'product/thumbnail', [300, 300]);
 
                 $validatedData['thumbnail_image'] = $thumbnailPath;
             }
@@ -385,6 +409,33 @@ class ProductController extends BaseController
 
             DB::commit();
             return $this->sendResponse(null, 'Product deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function applyDiscount(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'type' => 'required|in:category,all',
+                'discount' => 'required|numeric|min:0|max:100',
+                'category_id' => 'required_if:type,category|exists:categories,id'
+            ]);
+        
+            if ($request->type === 'category') {
+                Product::where('category_id', $request->category_id)->update([
+                    'discount' => $request->discount,
+                    'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ? / 100)', [$request->discount])
+                ]);
+            } else {
+                Product::query()->update([
+                    'discount' => $request->discount,
+                    'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ? / 100)', [$request->discount])
+                ]);
+            }
+            return $this->sendResponse(null, 'Discount added successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);

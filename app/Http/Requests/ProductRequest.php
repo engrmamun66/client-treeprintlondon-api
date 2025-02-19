@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class ProductRequest extends FormRequest
 {
     // Constants for repeated values
-    const MAX_IMAGE_SIZE = 2048; // 2MB
+    const MAX_IMAGE_SIZE = 10000; // 2MB
     const MAX_FILE_SIZE = 10000; // 10MB
     const ALLOWED_IMAGE_MIMES = 'jpeg,png,jpg,gif';
     const ALLOWED_FILE_MIMES = 'jpeg,png,jpg';

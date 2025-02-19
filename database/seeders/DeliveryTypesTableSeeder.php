@@ -16,7 +16,8 @@ class DeliveryTypesTableSeeder extends Seeder
     {
         DB::table('delivery_types')->insert([
             ['name' => 'Urgent 2-3 days', 'status' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Standard 4-7 days', 'status' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Next day delivery', 'status' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Same day pickup', 'status' => true, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
