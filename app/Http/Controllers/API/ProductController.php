@@ -148,7 +148,7 @@ class ProductController extends BaseController
     }
     function productDetailsBySlug($slug){
         try {
-            $product = Product::with(['category.parent','colors','sizes','genders','images'])->where('slug', $slug)->first();
+            $product = Product::with(['category.parent','colors','sizes','genders','images','brand'])->where('slug', $slug)->first();
 
             if (!$product) {
                 return $this->sendError('Product not found.', [], 404);
