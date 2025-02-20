@@ -30,15 +30,15 @@ class Product extends Model
     }
     public function colors()
     {
-        return $this->hasMany(ProductColor::class);
+        return $this->hasMany(ProductColor::class, 'product_id');
     }
     public function sizes()
     {
-        return $this->hasMany(ProductSize::class);
+        return $this->hasMany(ProductSize::class, 'product_id');
     }
     public function genders()
     {
-        return $this->hasMany(ProductGender::class);
+        return $this->hasMany(ProductGender::class, 'product_id');
     }
    
     public function getThumbnailImageUrlAttribute()
