@@ -31,10 +31,11 @@ class Product extends Model
     public function colors()
     {
         return $this->hasMany(ProductColor::class, 'product_id');
+        
     }
     public function sizes()
     {
-        return $this->hasMany(ProductSize::class, 'product_id');
+        return $this->belongsToMany(Size::class, 'product_sizes');
     }
     public function genders()
     {
