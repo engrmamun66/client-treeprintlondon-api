@@ -30,8 +30,7 @@ class Product extends Model
     }
     public function colors()
     {
-        return $this->hasMany(ProductColor::class, 'product_id');
-        
+        return $this->belongsToMany(Color::class, 'product_colors');
     }
     public function sizes()
     {
@@ -39,7 +38,7 @@ class Product extends Model
     }
     public function genders()
     {
-        return $this->hasMany(ProductGender::class, 'product_id');
+        return $this->belongsToMany(Gender::class, 'product_genders');
     }
    
     public function getThumbnailImageUrlAttribute()
