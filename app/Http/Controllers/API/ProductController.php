@@ -123,6 +123,18 @@ class ProductController extends BaseController
                 $query->where('name', 'LIKE', "%{$searchTerm}%");
             }
 
+            if ($request->has('min_unit_price') && $request->has('max_unit_price')) {
+                $query->whereBetween('min_unit_price', [$request->min_unit_price, $request->max_unit_price]);
+            }
+
+            if ($request->has('sort')) {
+                if ($request->sort == 'low') {
+                    $query->orderBy('price', 'asc');
+                } elseif ($request->sort == 'high') {
+                    $query->orderBy('price', 'desc');
+                }
+            }
+
             // Get filtered results
             $products = $query->paginate($request->per_page ?? 20);
 
