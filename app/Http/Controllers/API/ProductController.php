@@ -149,12 +149,23 @@ class ProductController extends BaseController
     function productDetailsBySlug($slug){
         try {
             $product = Product::with(['category.parent','colors','sizes','genders','images','brand'])->where('slug', $slug)->first();
-
+            $typeId = 1;
+            $query = Product::with(['category.parent'])
+            ->whereHas('category.type', function ($q) use ($typeId) {
+                $q->where('types.id', $typeId);
+            })
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
             if (!$product) {
                 return $this->sendError('Product not found.', [], 404);
             }
+            $data = [
+                'product' => $product,
+                'popular_products' => $query
+            ];
 
-            return $this->sendResponse($product, 'Product found.');
+            return $this->sendResponse($data, 'Product found.');
         } catch (\Exception $e) {
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
