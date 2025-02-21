@@ -157,12 +157,26 @@ class ProductController extends BaseController
             ->inRandomOrder()
             ->take(4)
             ->get();
+            $categoryIds = [$product->category_id]; // Start with the product's category ID
+
+            // Check if category has a parent, then add the parent category ID
+            if ($product->category && $product->category->parent_id) {
+                $categoryIds[] = $product->category->parent_id;
+            }
+        
+            $relatedProducts =  Product::whereIn('category_id', $categoryIds)
+                ->where('id', '!=', $product->id) // Exclude the current product
+                ->inRandomOrder()
+                ->take(4)
+                ->get();
             if (!$product) {
                 return $this->sendError('Product not found.', [], 404);
             }
             $data = [
                 'product' => $product,
-                'popular_products' => $query
+                'popular_products' => $query,
+                'related_products' => $relatedProducts
+   
             ];
 
             return $this->sendResponse($data, 'Product found.');
