@@ -356,7 +356,7 @@ class ProductController extends BaseController
             // Handle product sizes
             $sizes = json_decode($request->sizes, true);
             if (is_array($sizes)) {
-                $product->sizes()->delete(); // Delete old sizes
+                $product->sizes()->detach(); // Delete old sizes
 
                 foreach ($sizes as $size) {
                     if (isset($size['id'], $size['quantity'], $size['unit_price'])) {
@@ -374,7 +374,7 @@ class ProductController extends BaseController
             // Handle product colors
             $colors = json_decode($request->colors, true);
             if (is_array($colors)) {
-                $product->colors()->delete(); // Delete old colors
+                $product->colors()->detach(); // Delete old colors
 
                 foreach ($colors as $color) {
                     if (!empty($color)) {
@@ -389,7 +389,7 @@ class ProductController extends BaseController
             // Handle product genders
             $genders = json_decode($request->genders, true);
             if (is_array($genders)) {
-                $product->genders()->delete(); // Delete old genders
+                $product->genders()->detach(); // Delete old genders
 
                 foreach ($genders as $gender) {
                     if (!empty($gender)) {
@@ -429,9 +429,9 @@ class ProductController extends BaseController
             }
 
             // Delete associated sizes, colors, and genders
-            $product->sizes()->delete();
-            $product->colors()->delete();
-            $product->genders()->delete();
+            $product->sizes()->detach();
+            $product->colors()->detach();
+            $product->genders()->detach();
 
             // Delete product images
             if ($product->original_image && Storage::exists($product->original_image)) {
