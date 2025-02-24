@@ -163,7 +163,7 @@ class ProductController extends BaseController
             $product = Product::with(['category.parent','colors','sizes','genders','images','brand'])->where('slug', $slug)->first();
             $typeId = 1;
             $query = Product::with(['category.parent'])
-            ->whereHas('category.type', function ($q) use ($typeId) {
+            ->whereHas('category.types', function ($q) use ($typeId) {
                 $q->where('types.id', $typeId);
             })
             ->inRandomOrder()
