@@ -129,9 +129,9 @@ class ProductController extends BaseController
 
             if ($request->has('sort')) {
                 if ($request->sort == 'low') {
-                    $query->orderBy('price', 'asc');
+                    $query->orderBy('min_unit_price', 'asc');
                 } elseif ($request->sort == 'high') {
-                    $query->orderBy('price', 'desc');
+                    $query->orderBy('min_unit_price', 'desc');
                 }
             }
 
