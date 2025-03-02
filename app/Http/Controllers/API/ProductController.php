@@ -33,7 +33,7 @@ class ProductController extends BaseController
 
             // Filter by type (via category_types)
             if ($typeId = $request->get('type_id')) {
-                $query->whereHas('category.type', function ($q) use ($typeId) {
+                $query->whereHas('category.types', function ($q) use ($typeId) {
                     $q->where('types.id', $typeId);
                 });
             }
