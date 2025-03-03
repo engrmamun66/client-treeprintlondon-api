@@ -95,6 +95,12 @@ Route::group([
 
 Route::group([
     'middleware' => ['api', 'auth:api'],
+], function () {
+    Route::get('/discount-logs', [ProductController::class, 'getDiscountLogs']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:api'],
     'prefix' => 'brands'
 ], function () {
     Route::get('/', [BrandController::class, 'index']); // Get all categories

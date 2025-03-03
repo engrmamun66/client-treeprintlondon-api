@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Gender;
+use App\Models\DiscountLog;
 use App\Models\DeliveryType;
 use App\Models\ProductImage;
 use App\Models\ProductSize;
@@ -452,6 +453,32 @@ class ProductController extends BaseController
         }
     }
 
+    // public function applyDiscount(Request $request)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'type' => 'required|in:category,all',
+    //             'discount' => 'required|numeric|min:0|max:100',
+    //             'category_id' => 'required_if:type,category|exists:categories,id'
+    //         ]);
+        
+    //         if ($request->type === 'category') {
+    //             Product::where('category_id', $request->category_id)->update([
+    //                 'discount' => $request->discount,
+    //                 'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ? / 100)', [$request->discount])
+    //             ]);
+    //         } else {
+    //             Product::query()->update([
+    //                 'discount' => $request->discount,
+    //                 'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ? / 100)', [$request->discount])
+    //             ]);
+    //         }
+    //         return $this->sendResponse(null, 'Discount added successfully.');
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+    //     }
+    // }
     public function applyDiscount(Request $request)
     {
         try {
@@ -460,21 +487,48 @@ class ProductController extends BaseController
                 'discount' => 'required|numeric|min:0|max:100',
                 'category_id' => 'required_if:type,category|exists:categories,id'
             ]);
-        
+            DB::beginTransaction();
+            $query = Product::query();
+
             if ($request->type === 'category') {
-                Product::where('category_id', $request->category_id)->update([
+                $query->where('category_id', $request->category_id);
+            }
+
+            // Get affected product IDs before updating
+            $affectedProducts = $query->pluck('id')->toArray();
+
+            // Update products in a single query
+            $query->update([
+                'discount' => $request->discount,
+                'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ' . $request->discount . ' / 100)')
+            ]);
+
+            if(count($affectedProducts) > 0){
+                 // Log the discount application
+                DiscountLog::create([
+                    'type' => $request->type,
+                    'category_id' => $request->category_id ?? null,
                     'discount' => $request->discount,
-                    'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ? / 100)', [$request->discount])
-                ]);
-            } else {
-                Product::query()->update([
-                    'discount' => $request->discount,
-                    'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ? / 100)', [$request->discount])
+                    'applied_to' => json_encode($affectedProducts),
+                    'applied_at' => now(),
                 ]);
             }
+            DB::commit();
             return $this->sendResponse(null, 'Discount added successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+    public function getDiscountLogs(Request $request){
+        try {
+            $perPage = $request->get('per_page', 10); // Default to 10 items per page
+            $discountLogs = DiscountLog::with(['user', 'category'])
+                ->orderBy('applied_at', 'desc') // Sort by most recent discounts
+                ->paginate($perPage);
+
+            return $this->sendResponse($discountLogs, 'Discount logs fetched successfully.');
+        } catch (\Exception $e) {
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
