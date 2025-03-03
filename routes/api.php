@@ -66,7 +66,6 @@ Route::group([
 //private
 
 
-
 Route::group([
     'middleware' => ['api', 'auth:api'],
     'prefix' => 'categories'
@@ -78,7 +77,6 @@ Route::group([
     Route::put('/{category}', [CategoryController::class, 'update']); // Update a specific category
     Route::delete('/{category}', [CategoryController::class, 'destroy']); // Delete a specific category
 });
-
 Route::group([
     'middleware' => ['api', 'auth:api'],
     'prefix' => 'products'
@@ -89,14 +87,14 @@ Route::group([
     Route::put('/{product}', [ProductController::class, 'update']); // Update a specific category
     Route::delete('/{product}', [ProductController::class, 'destroy']); // Delete a specific category
     Route::get('/image/{id}/delete', [ProductController::class, 'deleteImage']);
-    Route::post('/apply-discount', [ProductController::class, 'applyDiscount']); // Create a new category
     
 });
 
 Route::group([
-    'middleware' => ['api', 'auth:api'],
+    'middleware' => ['api', 'auth:api']
 ], function () {
     Route::get('/discount-logs', [ProductController::class, 'getDiscountLogs']);
+    Route::post('/apply-discount', [ProductController::class, 'discountApply']);
 });
 
 Route::group([

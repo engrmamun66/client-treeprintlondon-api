@@ -19,6 +19,8 @@ use App\Traits\FileUpload;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 
 class ProductController extends BaseController
 {
@@ -479,8 +481,11 @@ class ProductController extends BaseController
     //         return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
     //     }
     // }
-    public function applyDiscount(Request $request)
-    {
+
+    
+    public function discountApply(Request $request){
+    
+        
         try {
             $validated = $request->validate([
                 'type' => 'required|in:category,all',
@@ -494,16 +499,15 @@ class ProductController extends BaseController
                 $query->where('category_id', $request->category_id);
             }
 
-            // Get affected product IDs before updating
-            $affectedProducts = $query->pluck('id')->toArray();
+            // // Get affected product IDs before updating
+            $affectedProducts = $query->pluck('id')->toArray() ?? [];
 
             // Update products in a single query
             $query->update([
                 'discount' => $request->discount,
                 'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ' . $request->discount . ' / 100)')
             ]);
-
-            if(count($affectedProducts) > 0){
+            if (is_array($affectedProducts) && count($affectedProducts) > 0) {
                  // Log the discount application
                 DiscountLog::create([
                     'type' => $request->type,
@@ -522,7 +526,7 @@ class ProductController extends BaseController
     }
     public function getDiscountLogs(Request $request){
         try {
-            $perPage = $request->get('per_page', 10); // Default to 10 items per page
+            $perPage = $request->get('per_page', 20); // Default to 10 items per page
             $discountLogs = DiscountLog::with(['user', 'category'])
                 ->orderBy('applied_at', 'desc') // Sort by most recent discounts
                 ->paginate($perPage);

@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class DiscountLog extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'type',
         'category_id',
