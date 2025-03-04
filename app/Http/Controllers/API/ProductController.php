@@ -508,7 +508,10 @@ class ProductController extends BaseController
                 'discounted_min_unit_price' => DB::raw('min_unit_price - (min_unit_price * ' . $request->discount . ' / 100)')
             ]);
             if (is_array($affectedProducts) && count($affectedProducts) > 0) {
-                 // Log the discount application
+                ProductSize::whereIn('product_id', $affectedProducts)
+                ->update([
+                    'discounted_unit_price' => DB::raw('unit_price - (unit_price * ' . $request->discount . ' / 100)')
+                ]);
                 DiscountLog::create([
                     'type' => $request->type,
                     'category_id' => $request->category_id ?? null,
