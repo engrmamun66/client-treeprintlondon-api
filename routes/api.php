@@ -11,6 +11,7 @@ use App\Http\Controllers\API\SizeController;
 use App\Http\Controllers\API\QuotationController;
 use App\Http\Controllers\API\GenderController;
 use App\Http\Controllers\API\TypeController;
+use App\Http\Controllers\API\OrderController;
 
 //public
 Route::group([
@@ -152,4 +153,11 @@ Route::group([
     Route::put('/{quotation}', [QuotationController::class, 'update']); // Get a specific category
     Route::delete('/{quotation}', [QuotationController::class, 'destroy']); // Delete a specific category
     Route::get('/files/{id}/download', [QuotationController::class, 'downloadFile']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'orders'
+], function () {
+    Route::post('/', [OrderController::class, 'store']);
 });

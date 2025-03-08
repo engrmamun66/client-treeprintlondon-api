@@ -15,9 +15,9 @@ class DeliveryTypesTableSeeder extends Seeder
     public function run()
     {
         DB::table('delivery_types')->insert([
-            ['name' => 'Standard delivery', 'status' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Next Day delivery', 'status' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Same Day pickup', 'status' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Standard delivery',  'cost' => 5.49, 'status' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Next Day delivery', 'cost' => 10.49, 'status' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Same Day pickup', 'cost' => 0.00, 'status' => true, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
