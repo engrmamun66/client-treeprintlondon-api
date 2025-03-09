@@ -64,6 +64,13 @@ Route::group([
 
 });
 
+Route::group([
+    'middleware' => ['api'],
+    'prefix' => 'orders'
+], function () {
+    Route::post('/', [OrderController::class, 'store']);
+});
+
 //private
 
 
@@ -155,9 +162,3 @@ Route::group([
     Route::get('/files/{id}/download', [QuotationController::class, 'downloadFile']);
 });
 
-Route::group([
-    'middleware' => ['api', 'auth:api'],
-    'prefix' => 'orders'
-], function () {
-    Route::post('/', [OrderController::class, 'store']);
-});
