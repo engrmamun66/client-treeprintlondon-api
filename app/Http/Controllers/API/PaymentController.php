@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Webhook;
@@ -11,7 +10,7 @@ use App\Models\Order;
 use App\Models\PaymentLog;
 use Log;
 
-class PaymentController extends Controller
+class PaymentController extends BaseController
 {
     public function createPaymentIntent(Request $request)
     {

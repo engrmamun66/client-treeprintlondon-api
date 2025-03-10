@@ -33,7 +33,7 @@ return new class extends Migration
             $table->index('updated_at', 'order_items_updated_at_index');
     
             // Unique constraint to prevent duplicate entries (excluding product_size_id)
-            $table->unique(['order_id', 'product_id'], 'order_items_unique');
+            $table->unique(['order_id', 'product_id', 'product_size_id', 'product_color_id'], 'order_items_unique');
     
             // Foreign key constraints
             $table->foreign('order_id')

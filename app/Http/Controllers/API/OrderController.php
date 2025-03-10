@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use App\Http\Controllers\API\BaseController as BaseController;
 use App\Http\Requests\CreateOrderRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
 
-class OrderController extends Controller
+class OrderController extends BaseController
 {
     /**
      * Create a new order.

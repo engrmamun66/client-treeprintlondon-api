@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 
 class ProductController extends BaseController
@@ -131,10 +132,10 @@ class ProductController extends BaseController
             }
 
             if ($request->has('sort')) {
-                if ($request->sort == 'low') {
-                    $query->orderBy('min_unit_price', 'asc');
-                } elseif ($request->sort == 'high') {
-                    $query->orderBy('min_unit_price', 'desc');
+                if ($request->sort === 'low') {
+                    $query->orderBy('min_unit_price', 'ASC');
+                } elseif ($request->sort === 'high') {
+                    $query->orderBy('min_unit_price', 'DESC');
                 }
             }
 
@@ -490,8 +491,23 @@ class ProductController extends BaseController
             $validated = $request->validate([
                 'type' => 'required|in:category,all',
                 'discount' => 'required|numeric|min:0|max:100',
-                'category_id' => 'required_if:type,category|exists:categories,id'
+                'category_id' => 'required_if:type,category'
             ]);
+        
+            // Conditional validation for category_id
+            $validator = Validator::make($request->all(), []);
+        
+            $validator->sometimes('category_id', 'exists:categories,id', function ($input) {
+                return $input->type === 'category' && !is_null($input->category_id);
+            });
+        
+            // Check if validation fails
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors(),
+                ], 422);
+            }
             DB::beginTransaction();
             $query = Product::query();
 
