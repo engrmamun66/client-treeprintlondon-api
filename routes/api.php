@@ -73,14 +73,16 @@ Route::group([
 });
 
 
-Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'stripe'
-], function () {
-    Route::post('/create-payment-intent', [PaymentController::class, 'createPaymentIntent']);
-    Route::post('/webhook', [PaymentController::class, 'handleWebhook']);
-});
-
+// Route::group([
+//     'middleware' => ['api'],
+//     'prefix' => 'stripe'
+// ], function () {
+//     Route::post('/create-payment-intent', [PaymentController::class, 'createPaymentIntent']);
+//     Route::post('/webhook', [PaymentController::class, 'handleWebhook']);
+// });
+Route::post('/create-payment', [PaymentController::class, 'createPayment']);
+Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('paypal.success');
+Route::get('/payment-cancel', [PaymentController::class, 'paymentCancel'])->name('paypal.cancel');
 //private
 
 

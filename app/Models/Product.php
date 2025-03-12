@@ -30,11 +30,11 @@ class Product extends Model
     }
     public function colors()
     {
-        return $this->belongsToMany(Color::class, 'product_colors');
+        return $this->belongsToMany(Color::class, 'product_colors')->withPivot(['id']);;
     }
     public function sizes()
     {
-        return $this->belongsToMany(Size::class, 'product_sizes')->withPivot(['unit_price', 'quantity', 'discounted_unit_price']);
+        return $this->belongsToMany(Size::class, 'product_sizes')->withPivot(['id','unit_price', 'quantity', 'discounted_unit_price']);
     }
     public function genders()
     {

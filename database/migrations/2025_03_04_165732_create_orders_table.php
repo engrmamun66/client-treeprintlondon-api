@@ -29,8 +29,6 @@ return new class extends Migration
             $table->decimal('tax', 10, 2)->nullable();
             $table->decimal('shipping_cost', 10, 2)->nullable();
             $table->decimal('total', 10, 2);
-            $table->string('payment_method');
-            $table->string('payment_status')->default('pending');
             $table->unsignedBigInteger('order_status_id'); // Foreign key for order status
             $table->text('notes')->nullable();
             $table->timestamps();
