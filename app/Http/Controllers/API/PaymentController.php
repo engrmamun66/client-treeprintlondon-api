@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\Stripe;
 use Stripe\Webhook;
@@ -10,7 +11,6 @@ use Stripe\PaymentIntent;
 use App\Models\Order;
 use App\Models\Payment;
 use Log;
-
 class PaymentController extends BaseController
 {
     // public function createPaymentIntent(Request $request)
@@ -109,7 +109,7 @@ class PaymentController extends BaseController
                 ],
             ],
             'application_context' => [
-                'return_url' => env('PAYPAL_PAYMENT_SUCCESS_URL'),
+                'return_url' => env('PAYPAL_PAYMENT_SUCCESS_URL').'?order_id='.$request->order_id,
                 'cancel_url' => env('PAYPAL_PAYMENT_CANCEL_URL'),
             ],
         ];
@@ -121,45 +121,52 @@ class PaymentController extends BaseController
 
     public function paymentSuccess(Request $request)
     {
-        $provider = new PayPalClient;
-        $provider->setApiCredentials(config('paypal'));
-        $token = $provider->getAccessToken();
-    
-        // Capture the payment using the token
-        $response = $provider->capturePaymentOrder($request->token);
-    
-        if (isset($response['status']) && $response['status'] === 'COMPLETED') {
-            // Extract payment method
-            $paymentMethod = 'Unknown'; // Default value
-            if (isset($response['payment_source'])) {
-                // Check for PayPal payment
-                if (isset($response['payment_source']['paypal'])) {
-                    $paymentMethod = 'PayPal';
+        try{
+            $provider = new PayPalClient;
+            $provider->setApiCredentials(config('paypal'));
+            $token = $provider->getAccessToken();
+        
+            // Capture the payment using the token
+            $response = $provider->capturePaymentOrder($request->token);
+        
+            if (isset($response['status']) && $response['status'] === 'COMPLETED') {
+                // Extract payment method
+                $paymentMethod = 'Unknown'; // Default value
+                if (isset($response['payment_source'])) {
+                    // Check for PayPal payment
+                    if (isset($response['payment_source']['paypal'])) {
+                        $paymentMethod = 'PayPal';
+                    }
+                    // Check for credit card payment
+                    elseif (isset($response['payment_source']['card'])) {
+                        $paymentMethod = 'Credit Card';
+                    }
                 }
-                // Check for credit card payment
-                elseif (isset($response['payment_source']['card'])) {
-                    $paymentMethod = 'Credit Card';
-                }
+                $amount = $response['purchase_units'][0]['payments']['captures'][0]['amount']['value'];
+                $currency = $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'];
+                // Save payment information to the database
+                $payment = Payment::create([
+                    'payment_id' => $response['id'], // PayPal transaction ID
+                    'payer_id' => $response['payer']['payer_id'], // PayPal payer ID
+                    'order_id' => $request->order_id, // Your custom order ID
+                    'amount' =>  $amount, // Payment amount
+                    'currency' => $currency, // Currency
+                    'status' => $response['status'], // Payment status
+                    'payment_method' => $paymentMethod, // Payment method
+                ]);
+        
+                return response()->json([
+                    'message' => 'Payment successful and saved',
+                    'payment' => $payment,
+                ]);
             }
     
-            // Save payment information to the database
-            $payment = \App\Models\Payment::create([
-                'payment_id' => $response['id'], // PayPal transaction ID
-                'payer_id' => $response['payer']['payer_id'], // PayPal payer ID
-                'order_id' => $request->order_id, // Your custom order ID
-                'amount' => $response['purchase_units'][0]['amount']['value'], // Payment amount
-                'currency' => $response['purchase_units'][0]['amount']['currency_code'], // Currency
-                'status' => $response['status'], // Payment status
-                'payment_method' => $paymentMethod, // Payment method
-            ]);
-    
-            return response()->json([
-                'message' => 'Payment successful and saved',
-                'payment' => $payment,
-            ]);
+            return response()->json(['message' => 'Payment failed'], 400);
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of error
+            DB::rollBack();
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
-    
-        return response()->json(['message' => 'Payment failed'], 400);
     }
 
     public function paymentCancel()

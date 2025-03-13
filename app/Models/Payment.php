@@ -12,7 +12,7 @@ class Payment extends Model
         'order_id',
         'amount',
         'currency',
-        'payment_method'
+        'payment_method',
         'status',
     ];
 }
