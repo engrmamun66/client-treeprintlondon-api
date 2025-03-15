@@ -13,9 +13,10 @@ class TypeTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('types')->insert([
-            ['name' => 'Popular Product', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Best Seller', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Clothing', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Advertising Materials', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Islamic Items', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
