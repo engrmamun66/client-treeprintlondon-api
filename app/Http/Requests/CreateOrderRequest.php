@@ -30,10 +30,8 @@ class CreateOrderRequest extends FormRequest
             'city' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
             'zipcode' => 'nullable|string|max:20',
-            'shipping_address' => 'required|string',
             'billing_address' => 'nullable|string',
             'delivery_type_id' => 'required|exists:delivery_types,id',
-            'payment_method' => 'required|string|max:255',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1', // Ensure at least one item is present
             'items.*.product_id' => 'required|exists:products,id',

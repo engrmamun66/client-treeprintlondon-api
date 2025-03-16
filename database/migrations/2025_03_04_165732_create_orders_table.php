@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('zipcode')->nullable();
-            $table->text('shipping_address');
             $table->text('billing_address')->nullable();
             $table->unsignedBigInteger('delivery_type_id');
             $table->decimal('subtotal', 10, 2);

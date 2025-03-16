@@ -32,14 +32,12 @@ class OrderController extends BaseController
                 'city' => $request->city,
                 'state' => $request->state,
                 'zipcode' => $request->zipcode,
-                'shipping_address' => $request->shipping_address,
                 'billing_address' => $request->billing_address,
                 'delivery_type_id' => $request->delivery_type_id,
                 'subtotal' => 0, // Will be calculated below
                 'tax' => $request->tax ?? 0, // Use provided tax or default to 0
                 'shipping_cost' => $request->shipping_cost ?? 0, // Use provided shipping cost or default to 0
                 'total' => 0, // Will be calculated below
-                'payment_method' => $request->payment_method,
                 'payment_status' => $request->payment_status ?? 'pending', // Default to 'pending'
                 'order_status_id' => $request->order_status_id ?? 1, // Default to 'pending' status ID (assuming 1 is pending)
                 'notes' => $request->notes,
