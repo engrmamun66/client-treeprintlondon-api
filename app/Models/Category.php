@@ -29,7 +29,7 @@ class Category extends Model
 
     public function types()
     {
-        return $this->belongsToMany(Type::class, 'category_types');
+        return $this->belongsToMany(Type::class, 'category_types', 'category_id', 'type_id');
     }
 
     public function categoryTypes()

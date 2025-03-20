@@ -73,6 +73,14 @@ Route::group([
 });
 
 
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'orders'
+], function () {
+    Route::get('/', [OrderController::class, 'index']);
+    Route::get('/{order_number}', [OrderController::class, 'show']);
+});
+
 // Route::group([
 //     'middleware' => ['api'],
 //     'prefix' => 'stripe'

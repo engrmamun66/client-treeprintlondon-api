@@ -3,13 +3,52 @@
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Http\Requests\CreateOrderRequest;
+use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\DeliveryType;
 use Illuminate\Support\Facades\DB;
+use Mail;
+use App\Mail\OrderEmailToAdmin; 
 
 class OrderController extends BaseController
 {
-    /**
+    public function index(Request $request)
+    {
+        try {
+            // Get the 'perPage' parameter from the request, default to 10
+            $perPage  = $request->per_page ?? 15;
+            // Fetch paginated categories
+            $orders = Order::latest()->paginate($perPage);
+            // Return paginated response
+            return $this->sendResponse($orders, 'Order list retrieved successfully.');
+
+        } catch (Exception $e) {
+            return $this->sendError($e, ["Line- ".$e->getLine().' '.$e->getMessage()], 500);
+        }
+    }
+
+
+    public function show($order_number)
+    {
+        try {
+            // Fetch the order with order items and product details
+            $order = Order::with(['deliveryType','orderItems.product' => function ($query) {
+                $query->with(['brand', 'category', 'images', 'colors', 'sizes', 'genders']);
+            }])->where('order_number', $order_number)->first();
+    
+            if (!$order) {
+                return $this->sendError('Order not found.', [], 404);
+            }
+    
+            // Return the order with product details
+            return $this->sendResponse($order, 'Order found.');
+    
+        } catch (Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+     /**
      * Create a new order.
      */
     public function store(CreateOrderRequest $request)
@@ -21,7 +60,13 @@ class OrderController extends BaseController
             // Generate a unique order number
             $orderNumber = 'ORD' . time();
 
-            // Create the order
+            // Fetch delivery type if provided
+            $deliveryType = null;
+            if ($request->delivery_type_id) {
+                $deliveryType = DeliveryType::find($request->delivery_type_id);
+            }
+
+            // Create the order with initial values
             $order = Order::create([
                 'order_number' => $orderNumber,
                 'customer_first_name' => $request->customer_first_name,
@@ -35,11 +80,11 @@ class OrderController extends BaseController
                 'billing_address' => $request->billing_address,
                 'delivery_type_id' => $request->delivery_type_id,
                 'subtotal' => 0, // Will be calculated below
-                'tax' => $request->tax ?? 0, // Use provided tax or default to 0
-                'shipping_cost' => $request->shipping_cost ?? 0, // Use provided shipping cost or default to 0
+                'tax' => round($request->tax ?? 0, 2), // Round tax to 2 decimal places
+                'shipping_cost' => round($deliveryType->cost ?? 0, 2), // Round shipping cost to 2 decimal places
                 'total' => 0, // Will be calculated below
                 'payment_status' => $request->payment_status ?? 'pending', // Default to 'pending'
-                'order_status_id' => $request->order_status_id ?? 1, // Default to 'pending' status ID (assuming 1 is pending)
+                'order_status_id' => $request->order_status_id ?? 1, // Default to 'pending' status ID
                 'notes' => $request->notes,
             ]);
 
@@ -49,19 +94,22 @@ class OrderController extends BaseController
 
             // Create order items
             foreach ($request->items as $item) {
-                $totalPrice = ($item['discounted_unit_price'] ?? $item['unit_price']) * $item['quantity'];
+                // Calculate total price for the item
+                $unitPrice = $item['discounted_unit_price'] ?? $item['unit_price'];
+                $totalPrice = round($unitPrice * $item['quantity'], 2); // Round total price to 2 decimal places
                 $subtotal += $totalPrice;
 
+                // Prepare order item data
                 $orderItems[] = [
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
                     'product_size_id' => $item['product_size_id'],
                     'product_color_id' => $item['product_color_id'] ?? null, // Optional field
-                    'unit_price' => $item['unit_price'],
-                    'discounted_unit_price' => $item['discounted_unit_price'] ?? null, // Optional field
+                    'unit_price' => round($item['unit_price'], 2), // Round unit price to 2 decimal places
+                    'discounted_unit_price' => isset($item['discounted_unit_price']) ? round($item['discounted_unit_price'], 2) : null, // Round discounted price to 2 decimal places
                     'quantity' => $item['quantity'],
                     'total_price' => $totalPrice,
-                    'discount' => $item['discount'] ?? null, // Optional field
+                    'discount' => isset($item['discount']) ? round($item['discount'], 2) : null, // Round discount to 2 decimal places
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -70,15 +118,18 @@ class OrderController extends BaseController
             // Insert order items
             OrderItem::insert($orderItems);
 
+            // Calculate total
+            $total = round($subtotal + $order->tax + $order->shipping_cost, 2); // Round total to 2 decimal places
+
             // Update order subtotal and total
             $order->update([
-                'subtotal' => $subtotal,
-                'total' => $subtotal + $order->tax + $order->shipping_cost,
+                'subtotal' => round($subtotal, 2), // Round subtotal to 2 decimal places
+                'total' => $total,
             ]);
 
             // Commit the transaction
             DB::commit();
-
+            Mail::to('support@londonteeprint.com')->send(new OrderEmailToAdmin($order));
             // Return success response
             return $this->sendResponse($order, 'Order created successfully.');
 

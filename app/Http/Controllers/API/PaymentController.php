@@ -103,7 +103,7 @@ class PaymentController extends BaseController
             'purchase_units' => [
                 [
                     'amount' => [
-                        'currency_code' => 'USD',
+                        'currency_code' => 'GBP',
                         'value' => $request->amount,
                     ],
                 ],
@@ -144,7 +144,13 @@ class PaymentController extends BaseController
                 }
                 $amount = $response['purchase_units'][0]['payments']['captures'][0]['amount']['value'];
                 $currency = $response['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'];
+                
+                //update order status
+                $order = Order::find( $request->order_id);
+                $order->payment_status = 'completed';
+                $order->save();
                 // Save payment information to the database
+
                 $payment = Payment::create([
                     'payment_id' => $response['id'], // PayPal transaction ID
                     'payer_id' => $response['payer']['payer_id'], // PayPal payer ID

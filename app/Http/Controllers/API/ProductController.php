@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Gender;
+use App\Models\Category;
 use App\Models\DiscountLog;
 use App\Models\DeliveryType;
 use App\Models\ProductImage;
@@ -34,11 +35,18 @@ class ProductController extends BaseController
 
             // Build the query with eager loading
             $query = Product::with(['category.parent', 'brand']);
-
+            
             // Filter by type (via category_types)
             if ($typeId = $request->get('type_id')) {
-                $query->whereHas('category.types', function ($q) use ($typeId) {
-                    $q->where('types.id', $typeId);
+                //$query->whereHas('category.types', function ($q) use ($typeId) {
+                  //  $q->where('type_id', $typeId); // Use 'type_id' instead of 'types.id'
+                //});
+                $query->whereHas('category', function ($q) use ($typeId) {
+                    $q->whereHas('types', function ($q) use ($typeId) {
+                        $q->where('type_id', $typeId);
+                    })->orWhereHas('parent.types', function ($q) use ($typeId) {
+                        $q->where('type_id', $typeId);
+                    });
                 });
             }
 
@@ -85,6 +93,22 @@ class ProductController extends BaseController
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
+    
+    public static function getAllChildCategoryIds(array $categoryIds): array
+    {
+        $allCategoryIds = $categoryIds;
+
+        // Fetch immediate child categories
+        $childCategories = Category::whereIn('parent_id', $categoryIds)->pluck('id');
+
+        if ($childCategories->isNotEmpty()) {
+            // Recursively fetch child categories of child categories
+            $allCategoryIds = array_merge($allCategoryIds, $childCategories->toArray());
+        }
+
+        return $allCategoryIds;
+    }
+
     public function filterProducts(Request $request)
     {
         try {
@@ -92,14 +116,23 @@ class ProductController extends BaseController
 
              // Filter by a single category slug
             if ($request->has('category_slug') && !empty($request->category_slug)) {
-                $query->whereHas('category', function ($q) use ($request) {
-                    $q->where('slug', $request->category_slug);
-                });
+                // $query->whereHas('category', function ($q) use ($request) {
+                //     $q->where('slug', $request->category_slug);
+                // });
+                $categoryIds = Category::where('slug', $request->category_slug)->pluck('id')->toArray();
+                $allCategoryIds = Self::getAllChildCategoryIds($categoryIds);
+            
+                // Filter products by category IDs (including child categories)
+                $query->whereIn('category_id', $allCategoryIds);
             }
 
             // Filter by category IDs
             if ($request->has('category_ids') && is_array($request->category_ids) && !empty($request->category_ids)) {
-                $query->whereIn('category_id', $request->category_ids);
+                // Fetch all child category IDs (including the given category IDs)
+                $allCategoryIds = Self::getAllChildCategoryIds($request->category_ids);
+            
+                // Filter products by category IDs (including child categories)
+                $query->whereIn('category_id', $allCategoryIds);
             }
 
             // Filter by brand IDs
@@ -129,15 +162,17 @@ class ProductController extends BaseController
 
             if ($request->has('min_unit_price') && $request->has('max_unit_price')) {
                 $query->whereBetween('min_unit_price', [$request->min_unit_price, $request->max_unit_price]);
+               
             }
 
             if ($request->has('sort')) {
-                if ($request->sort === 'low') {
+                if ($request->sort == 'low') {
                     $query->orderBy('min_unit_price', 'ASC');
-                } elseif ($request->sort === 'high') {
+                } elseif ($request->sort == 'high') {
                     $query->orderBy('min_unit_price', 'DESC');
                 }
             }
+       
 
             // Get filtered results
             $products = $query->paginate($request->per_page ?? 20);
@@ -488,6 +523,7 @@ class ProductController extends BaseController
     
         
         try {
+            // Initial validation
             $validated = $request->validate([
                 'type' => 'required|in:category,all',
                 'discount' => 'required|numeric|min:0|max:100',
@@ -528,6 +564,7 @@ class ProductController extends BaseController
                 ->update([
                     'discounted_unit_price' => DB::raw('unit_price - (unit_price * ' . $request->discount . ' / 100)')
                 ]);
+                 // Log the discount application
                 DiscountLog::create([
                     'type' => $request->type,
                     'category_id' => $request->category_id ?? null,
@@ -546,7 +583,7 @@ class ProductController extends BaseController
     public function getDiscountLogs(Request $request){
         try {
             $perPage = $request->get('per_page', 20); // Default to 10 items per page
-            $discountLogs = DiscountLog::with(['user', 'category'])
+            $discountLogs = DiscountLog::with(['category'])
                 ->orderBy('applied_at', 'desc') // Sort by most recent discounts
                 ->paginate($perPage);
 

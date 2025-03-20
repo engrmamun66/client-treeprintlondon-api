@@ -18,4 +18,10 @@ class DiscountLog extends Model
         'applied_to' => 'array',
         'applied_at' => 'datetime',
     ];
+    
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
 }

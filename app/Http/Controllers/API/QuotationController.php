@@ -78,8 +78,8 @@ class QuotationController extends BaseController
             }
             $quotation = Quotation::with('files')->find( $quotation->id);
             $mailData = $quotation;
-            Mail::to('rabbimahmud95@gmail.com')->send(new QuotationEmailToAdmin($mailData));
-            // Mail::to($mailData->email)->send(new QuotationEmailToCustomer($mailData));
+            Mail::to('support@londonteeprint.com')->send(new QuotationEmailToAdmin($mailData));
+            Mail::to($mailData->email)->send(new QuotationEmailToCustomer($mailData));
     
             return $this->sendResponse($quotation, 'Quotation created successfully.', 201);
         } catch (\Exception $e) {
