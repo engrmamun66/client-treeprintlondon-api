@@ -106,7 +106,7 @@
     </div>
 
     <div class="email-footer">
-        <p>&copy; 2024 IONIC Rentals. All rights reserved.</p>
+        <p>&copy; 2024 Tee Print London. All rights reserved.<br></p>
     </div>
 </div>
 

@@ -10,6 +10,7 @@ use App\Models\DeliveryType;
 use Illuminate\Support\Facades\DB;
 use Mail;
 use App\Mail\OrderEmailToAdmin; 
+use App\Mail\OrderEmailToCustomer;
 
 class OrderController extends BaseController
 {
@@ -130,6 +131,7 @@ class OrderController extends BaseController
             // Commit the transaction
             DB::commit();
             Mail::to('support@londonteeprint.com')->send(new OrderEmailToAdmin($order));
+            Mail::to($order->customer_email)->send(new OrderEmailToCustomer($order));
             // Return success response
             return $this->sendResponse($order, 'Order created successfully.');
 
