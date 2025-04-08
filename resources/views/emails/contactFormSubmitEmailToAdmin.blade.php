@@ -86,22 +86,19 @@
 <body>
 <div class="email-container">
     <div class="email-header">
-        <img src="{{ asset('https://res.cloudinary.com/dyfnpakfq/image/upload/v1737653056/NnZbENb4_pgjaw2.jpg') }}" alt="Tee Print Logo" style="border-radius: 15px;height: 150px; width: 150px;">
+    <img src="{{ asset('https://res.cloudinary.com/dyfnpakfq/image/upload/v1737653056/NnZbENb4_pgjaw2.jpg') }}" alt="Tee Print Logo" style="border-radius: 15px;height: 150px; width: 150px;">
     </div>
 
     <div class="email-content">
-    <p>Dear {{ $mailData['full_name'] }},</p>
+    <p>Hello Admin,</p>
 
-        <p>Thank you for your interest. We have received your quotation request, and here are the details:</p>
+        <p>A new email sent from <strong>{{ $mailData['name'] }}</strong>. Below are the details:</p>
         <ul>
-            <li><strong>Quotation reference:</strong> {{ $mailData['uuid'] }}</li>
-            <li><strong>Name:</strong> {{ $mailData['full_name'] }}</li>
+            <li><strong>Customer Name:</strong> {{ $mailData['name'] }}</li>
             <li><strong>Email:</strong> {{ $mailData['email'] }}</li>
             <li><strong>Phone:</strong> {{ $mailData['phone'] }}</li>
         </ul>
-        <p>Our team will be in touch with you shortly.</p>
-        <p>We hope you enjoy using the Tee Print London app. Should you have any questions or wish to discuss your thoughts directly, feel free to call us at +44 7888 185120 or contact our support team at  [<a href="mailto:support@teeprintlondon.co.uk">support@teeprintlondon.co.uk</a>]. We are here to assist you every step of the way.</p>
-        <strong>Your Vision, Our Expertise – You Choose, We Design.</strong>
+
         <p>Best regards,</p>
         <p>The Tee Print London Team</p>
     </div>

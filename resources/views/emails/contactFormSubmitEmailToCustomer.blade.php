@@ -90,12 +90,11 @@
     </div>
 
     <div class="email-content">
-    <p>Dear {{ $mailData['full_name'] }},</p>
+    <p>Dear {{ $mailData['name'] }},</p>
 
-        <p>Thank you for your interest. We have received your quotation request, and here are the details:</p>
+        <p>Thank you for your email. We have received your email, and here are the details:</p>
         <ul>
-            <li><strong>Quotation reference:</strong> {{ $mailData['uuid'] }}</li>
-            <li><strong>Name:</strong> {{ $mailData['full_name'] }}</li>
+            <li><strong>Name:</strong> {{ $mailData['name'] }}</li>
             <li><strong>Email:</strong> {{ $mailData['email'] }}</li>
             <li><strong>Phone:</strong> {{ $mailData['phone'] }}</li>
         </ul>

@@ -135,7 +135,7 @@
             <a href="{{ $mailData['order_link'] }}" class="order-button">View Your Order</a>
         </p> -->
         
-        <p>If you have any questions about your order, please reply to this email or contact us at <a href="mailto:hello@teeprintlondon.co.uk">hello@teeprintlondon.co.uk</a>.</p>
+        <p>If you have any questions about your order, please reply to this email or contact us at <a href="mailto:support@teeprintlondon.co.uk">support@teeprintlondon.co.uk</a>.</p>
         
         <p>Best regards,<br>The Tee Print London Team</p>
     </div>

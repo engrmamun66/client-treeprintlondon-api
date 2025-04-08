@@ -92,7 +92,7 @@
     <div class="email-content">
     <p>Hello Admin,</p>
 
-        <p>A new order has been submitted by <strong>{{ $mailData['customer_first_name'] }} &nbsp;{{ $mailData['customer_last_name'] }}</strong>. Below are the details:</p>
+         <p>A new order has been submitted by <strong>{{ $mailData['customer_first_name'] }} &nbsp;{{ $mailData['customer_last_name'] }}</strong>. Below are the details:</p>
         <ul>
             <li><strong>Order number:</strong> {{ $mailData['order_number'] }}</li>
             <li><strong>Customer Name:</strong> {{ $mailData['customer_first_name'] }} &nbsp;{{ $mailData['customer_last_name'] }}</li>
@@ -101,11 +101,12 @@
             <li><strong>Total:</strong>$ {{ $mailData['total'] }}</li>
         </ul>
 
+
         <p>Best regards,</p>
         <p>The Tee Print London Team</p>
     </div>
 
-    <div class="email-footer">
+     <div class="email-footer">
         <p>&copy; 2024 Tee Print London. All rights reserved.<br></p>
     </div>
 </div>

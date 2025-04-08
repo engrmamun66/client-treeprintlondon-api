@@ -13,6 +13,8 @@ use App\Http\Controllers\API\GenderController;
 use App\Http\Controllers\API\TypeController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\API\HomeController;
+
 
 //public
 Route::group([
@@ -32,6 +34,8 @@ Route::group([
     Route::get('/type-wise-category-list', [TypeController::class, 'getTypewiseCategoryList']); // Get all categories
     Route::post('/filter-products', [ProductController::class, 'filterProducts']); 
     Route::get('/search-products', [ProductController::class, 'search']);
+    Route::post('/send-contact-us-email', [HomeController::class, 'submitContactForm']);
+    
     
 });
 

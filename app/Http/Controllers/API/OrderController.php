@@ -28,8 +28,9 @@ class OrderController extends BaseController
             return $this->sendError($e, ["Line- ".$e->getLine().' '.$e->getMessage()], 500);
         }
     }
-
-
+    
+    
+    
     public function show($order_number)
     {
         try {
@@ -49,7 +50,7 @@ class OrderController extends BaseController
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
-     /**
+      /**
      * Create a new order.
      */
     public function store(CreateOrderRequest $request)
@@ -88,6 +89,8 @@ class OrderController extends BaseController
                 'order_status_id' => $request->order_status_id ?? 1, // Default to 'pending' status ID
                 'notes' => $request->notes,
             ]);
+            
+            
 
             // Calculate subtotal and total
             $subtotal = 0;
@@ -115,9 +118,11 @@ class OrderController extends BaseController
                     'updated_at' => now(),
                 ];
             }
+           
 
             // Insert order items
             OrderItem::insert($orderItems);
+            
 
             // Calculate total
             $total = round($subtotal + $order->tax + $order->shipping_cost, 2); // Round total to 2 decimal places
@@ -127,11 +132,14 @@ class OrderController extends BaseController
                 'subtotal' => round($subtotal, 2), // Round subtotal to 2 decimal places
                 'total' => $total,
             ]);
-
+           
             // Commit the transaction
             DB::commit();
-            Mail::to('support@londonteeprint.com')->send(new OrderEmailToAdmin($order));
+              
+            Mail::to('support@teeprintlondon.co.uk')->send(new OrderEmailToAdmin($order));
             Mail::to($order->customer_email)->send(new OrderEmailToCustomer($order));
+
+
             // Return success response
             return $this->sendResponse($order, 'Order created successfully.');
 

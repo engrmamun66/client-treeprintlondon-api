@@ -9,18 +9,20 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Attachment;
-class OrderEmailToCustomer extends Mailable
+class ContactFormSubmitEmailToAdmin extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $mailData;
+    public $filePaths;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($mailData)
+    public function __construct($mailData, $filePaths)
     {
         $this->mailData = $mailData;
+        $this->filePaths = $filePaths;
     }
 
     /**
@@ -29,7 +31,7 @@ class OrderEmailToCustomer extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'A new order has placed',
+            subject: 'A new email has received',
         );
     }
 
@@ -39,7 +41,7 @@ class OrderEmailToCustomer extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.orderEmailToCustomer'
+            view: 'emails.contactFormSubmitEmailToAdmin'
         );
     }
 
@@ -51,6 +53,12 @@ class OrderEmailToCustomer extends Mailable
     public function attachments(): array
     {
         $attachments = [];
+
+        // Add each file as an attachment
+        foreach ($this->filePaths as $file) {
+            $attachments[] = Attachment::fromStorageDisk('public', $file);
+        }
+
         return $attachments;
     }
 }
