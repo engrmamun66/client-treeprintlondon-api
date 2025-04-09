@@ -85,6 +85,18 @@ class ProductRequest extends FormRequest
                 'boolean',
             ],
 
+             // Status
+             'show_size_table' => [
+                'nullable',
+                'boolean',
+            ],
+
+             // Status
+             'show_personalized' => [
+                'nullable',
+                'boolean',
+            ],
+
             // Sizes and Colors
             'sizes' => ['nullable', 'json'],
             'colors' => ['nullable', 'json'],

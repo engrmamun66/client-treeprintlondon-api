@@ -8,12 +8,41 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Mail;
+use App\Models\Product;
+use App\Models\Brand;
+use App\Models\Order;
+use App\Models\Quotation;
 use App\Mail\ContactFormSubmitEmailToAdmin; 
 use App\Mail\ContactFormSubmitEmailToCustomer; 
+
 
 class HomeController extends BaseController
 {
     use FileUpload;
+
+    public function dashBoardData(){
+        try {
+            $totalBrands = Brand::count();
+            $totalOrders = Order::count();
+            $totalQuotations = Quotation::count();
+            $totalProducts = Product::count();
+            $completedOrders = Order::where('payment_status', 'completed')->count();
+            $recentOrders = Order::whereDate('created_at', '>=', now()->subDays(7))->count();
+            $recentQuotations = Quotation::whereDate('created_at', '>=', now()->subDays(7))->count();
+            $data = [
+                'totalBrands' => $totalBrands,
+                'totalOrders' => $totalOrders,
+                'totalQuotations' => $totalQuotations,
+                'totalProducts' => $totalProducts,
+                'completedOrders' => $completedOrders,
+                'recentOrders' => $recentOrders,
+                'recentQuotations' => $recentQuotations,
+            ];
+            return $this->sendResponse($data, 'Data retrieved successfully.');
+        } catch (\Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
 
     public function submitContactForm(Request $request)
     {

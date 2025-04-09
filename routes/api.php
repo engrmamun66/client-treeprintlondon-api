@@ -35,6 +35,8 @@ Route::group([
     Route::post('/filter-products', [ProductController::class, 'filterProducts']); 
     Route::get('/search-products', [ProductController::class, 'search']);
     Route::post('/send-contact-us-email', [HomeController::class, 'submitContactForm']);
+    Route::get('/dashboard-data', [HomeController::class, 'dashBoardData']);
+    
     
     
 });

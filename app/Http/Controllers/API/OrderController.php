@@ -114,6 +114,7 @@ class OrderController extends BaseController
                     'quantity' => $item['quantity'],
                     'total_price' => $totalPrice,
                     'discount' => isset($item['discount']) ? round($item['discount'], 2) : null, // Round discount to 2 decimal places
+                    'note' => isset($item['note']) ? $item['note'] : null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
