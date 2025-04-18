@@ -11,19 +11,48 @@ use Illuminate\Support\Facades\DB;
 use Mail;
 use App\Mail\OrderEmailToAdmin; 
 use App\Mail\OrderEmailToCustomer;
-
+use Illuminate\Support\Facades\Validator;
 class OrderController extends BaseController
 {
     public function index(Request $request)
     {
         try {
-            // Get the 'perPage' parameter from the request, default to 10
-            $perPage  = $request->per_page ?? 15;
-            // Fetch paginated categories
-            $orders = Order::latest()->paginate($perPage);
+            // Get the 'perPage' parameter from the request, default to 15
+            $perPage = $request->per_page ?? 15;
+            
+            // Initialize the query
+            $query = Order::query();
+            
+            // Apply filters
+            if ($request->has('is_recent') && $request->is_recent) {
+                $query->whereDate('created_at', '>=', now()->subDays(7));
+            }
+            
+            if ($request->has('order_status_id')) {
+                $query->where('order_status_id', $request->order_status_id);
+            }
+            
+            if ($request->has('payment_status')) {
+                $query->where('payment_status', $request->payment_status);
+            }
+            
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('order_number', 'like', "%{$search}%")
+                      ->orWhere('customer_email', 'like', "%{$search}%")
+                      ->orWhere('customer_phone', 'like', "%{$search}%")
+                      ->orWhere('customer_first_name', 'like', "%{$search}%")
+                      ->orWhere('customer_last_name', 'like', "%{$search}%");
+                });
+            }
+            
+            // Order by latest and paginate
+            $orders = $query->latest()->paginate($perPage);
+            
             // Return paginated response
             return $this->sendResponse($orders, 'Order list retrieved successfully.');
-
+    
         } catch (Exception $e) {
             return $this->sendError($e, ["Line- ".$e->getLine().' '.$e->getMessage()], 500);
         }
@@ -146,6 +175,63 @@ class OrderController extends BaseController
 
         } catch (\Exception $e) {
             // Rollback the transaction in case of error
+            DB::rollBack();
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function updateOrderStatus(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'order_id' => 'required|numeric',
+                'order_status_id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError("Validation Error", $validator->errors(), 422);
+            }
+            // Fetch the order with order items and product details
+            $order = Order::where('id', $request->order_id)->first();
+
+            if (!$order) {
+                return $this->sendError('Order not found.', [], 404);
+            }
+
+            $order->order_status_id = $request->order_status_id;
+            $order->save();
+            // Return the order with product details
+            return $this->sendResponse($order, 'Order status updated successfully.');
+    
+        } catch (Exception $e) {
+            return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    public function destroy($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Find the order with its items
+            $order = Order::with('orderItems')->find($id);
+
+            if (!$order) {
+                return $this->sendError('Order not found.', [], 404);
+            }
+
+            // Delete all associated order items first
+            OrderItem::where('order_id', $order->id)->delete();
+
+            // Then delete the order
+            $order->delete();
+
+            DB::commit();
+
+            return $this->sendResponse([], 'Order deleted successfully.');
+
+        } catch (\Exception $e) {
             DB::rollBack();
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }

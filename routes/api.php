@@ -78,13 +78,18 @@ Route::group([
     Route::post('/', [OrderController::class, 'store']);
 });
 
-
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+], function () {
+    Route::post('/update-order-status', [OrderController::class, 'updateOrderStatus']);
+});
 Route::group([
     'middleware' => ['api', 'auth:api'],
     'prefix' => 'orders'
 ], function () {
     Route::get('/', [OrderController::class, 'index']);
     Route::get('/{order_number}', [OrderController::class, 'show']);
+    Route::delete('/{id}', [OrderController::class, 'destroy']);
 });
 
 // Route::group([

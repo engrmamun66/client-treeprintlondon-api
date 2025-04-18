@@ -141,7 +141,7 @@
     </div>
 
     <div class="email-footer">
-        <p>&copy; 2024 Tee Print London. All rights reserved.<br></p>
+        <p>&copy; 2025 Tee Print London. All rights reserved.<br></p>
     </div>
 </div>
 </body>

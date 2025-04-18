@@ -97,6 +97,7 @@
             <li><strong>Name:</strong> {{ $mailData['name'] }}</li>
             <li><strong>Email:</strong> {{ $mailData['email'] }}</li>
             <li><strong>Phone:</strong> {{ $mailData['phone'] }}</li>
+            <li><strong>Message:</strong> {{ isset($mailData['note']) ? $mailData['note']: ''  }}</li>
         </ul>
         <p>Our team will be in touch with you shortly.</p>
         <p>We hope you enjoy using the Tee Print London app. Should you have any questions or wish to discuss your thoughts directly, feel free to call us at +44 7888 185120 or contact our support team at  [<a href="mailto:support@teeprintlondon.co.uk">support@teeprintlondon.co.uk</a>]. We are here to assist you every step of the way.</p>
@@ -106,7 +107,7 @@
     </div>
 
     <div class="email-footer">
-        <p>&copy; 2024 Tee Print London. All rights reserved.<br></p>
+        <p>&copy; 2025 Tee Print London. All rights reserved.<br></p>
     </div>
 </div>
 

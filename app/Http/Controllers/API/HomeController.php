@@ -14,7 +14,7 @@ use App\Models\Order;
 use App\Models\Quotation;
 use App\Mail\ContactFormSubmitEmailToAdmin; 
 use App\Mail\ContactFormSubmitEmailToCustomer; 
-
+use Illuminate\Support\Facades\Validator;
 
 class HomeController extends BaseController
 {
@@ -47,11 +47,23 @@ class HomeController extends BaseController
     public function submitContactForm(Request $request)
     {
         try {
-            $validated = $request->validate([
+            // $this->validate($request, [
+            //     'name' => 'required|string|max:255',
+            //     'email' => 'required|email|max:255',
+            //     'phone' => 'nullable|string|max:20',
+            //     'note' => 'nullable|string',
+            //     'files.*' => [
+            //         'nullable',
+            //         'file',
+            //         'mimes:jpeg,png,jpg,gif,pdf,doc,docx', // Allowed file types
+            //         'max:10000', // Maximum file size: 2MB
+            //     ], // Each file max 10MB
+            // ]);
+            $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
                 'phone' => 'nullable|string|max:20',
-                'note' => 'required|string',
+                'note' => 'nullable|string',
                 'files.*' => [
                     'nullable',
                     'file',
@@ -59,6 +71,14 @@ class HomeController extends BaseController
                     'max:10000', // Maximum file size: 2MB
                 ], // Each file max 10MB
             ]);
+
+            if ($validator->fails()) {
+                return $this->sendError("Validation Error", $validator->errors(), 422);
+            }
+
+            // Get the validated data
+            $validated = $validator->validated();
+
            // Handle file uploads
            $filePaths = [];
            if ($request->hasFile('files')) {

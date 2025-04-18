@@ -548,7 +548,8 @@ class ProductController extends BaseController
             $query = Product::query();
 
             if ($request->type === 'category') {
-                $query->where('category_id', $request->category_id);
+                $allCategoryIds = Self::getAllChildCategoryIds([$request->category_id]);
+                count( $allCategoryIds) > 0 ? $query->whereIn('category_id',  $allCategoryIds) : $query->where('category_id', $request->category_id );
             }
 
             // // Get affected product IDs before updating

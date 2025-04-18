@@ -97,6 +97,7 @@
             <li><strong>Customer Name:</strong> {{ $mailData['name'] }}</li>
             <li><strong>Email:</strong> {{ $mailData['email'] }}</li>
             <li><strong>Phone:</strong> {{ $mailData['phone'] }}</li>
+            <li><strong>Message:</strong> {{ isset($mailData['note']) ? $mailData['note']: ''  }}</li>
         </ul>
 
         <p>Best regards,</p>
@@ -104,7 +105,7 @@
     </div>
 
     <div class="email-footer">
-        <p>&copy; 2024 Tee Print London. All rights reserved.<br></p>
+        <p>&copy; 2025 Tee Print London. All rights reserved.<br></p>
     </div>
 </div>
 
