@@ -275,7 +275,7 @@ class ProductController extends BaseController
                 // $originalPath = $this->FileUpload($originalImage, 'product/original');
 
                 // Store the thumbnail image (150x150) in public disk
-                $thumbnailPath = $this->FileUpload($originalImage, 'product/thumbnail', [400, 600]);
+                $thumbnailPath = $this->FileUpload($originalImage, 'product/thumbnail', [600, 600]);
 
                 // $validatedData['original_image'] = $originalPath;
                 $validatedData['thumbnail_image'] = $thumbnailPath;
@@ -367,7 +367,7 @@ class ProductController extends BaseController
 
                 // Upload the new thumbnail image
                 $thumbnailImage = $request->file('thumbnail_image');
-                $thumbnailPath = $this->FileUpload($thumbnailImage, 'product/thumbnail',  [400, 600]);
+                $thumbnailPath = $this->FileUpload($thumbnailImage, 'product/thumbnail',  [600, 600]);
 
                 $validatedData['thumbnail_image'] = $thumbnailPath;
             }

@@ -23,10 +23,18 @@ class QuotationController extends BaseController
         try {
             // Get the 'perPage' parameter from the request, default to 15
             $perPage = $request->per_page ?? 15;
-
-            // Fetch paginated brands
-            $quotations = Quotation::with('files')->orderBy('id', 'DESC')->paginate($perPage);
-
+            
+            // Initialize query with eager loading
+            $query = Quotation::with('files');
+            
+            // Apply filters
+            if ($request->has('is_recent') && $request->is_recent) {
+                $query->whereDate('created_at', '>=', now()->subDays(7));
+            }
+            
+            // Apply sorting and pagination
+            $quotations = $query->orderBy('id', 'DESC')->paginate($perPage);
+    
             // Return paginated response
             return $this->sendResponse($quotations, 'Quotation list retrieved successfully.');
         } catch (\Exception $e) {
