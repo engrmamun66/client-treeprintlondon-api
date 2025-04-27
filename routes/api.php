@@ -14,7 +14,7 @@ use App\Http\Controllers\API\TypeController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\HomeController;
-
+use App\Http\Controllers\API\CouponController;
 
 //public
 Route::group([
@@ -36,8 +36,7 @@ Route::group([
     Route::get('/search-products', [ProductController::class, 'search']);
     Route::post('/send-contact-us-email', [HomeController::class, 'submitContactForm']);
     Route::get('/dashboard-data', [HomeController::class, 'dashBoardData']);
-    
-    
+    Route::post('/apply-coupon', [CouponController::class, 'applyCoupon']);
     
 });
 
@@ -71,6 +70,7 @@ Route::group([
 
 });
 
+
 Route::group([
     'middleware' => ['api'],
     'prefix' => 'orders'
@@ -83,6 +83,7 @@ Route::group([
 ], function () {
     Route::post('/update-order-status', [OrderController::class, 'updateOrderStatus']);
 });
+
 Route::group([
     'middleware' => ['api', 'auth:api'],
     'prefix' => 'orders'
@@ -191,5 +192,17 @@ Route::group([
     Route::put('/{quotation}', [QuotationController::class, 'update']); // Get a specific category
     Route::delete('/{quotation}', [QuotationController::class, 'destroy']); // Delete a specific category
     Route::get('/files/{id}/download', [QuotationController::class, 'downloadFile']);
+});
+
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'coupons'
+], function () {
+    Route::get('/', [CouponController::class, 'index']); // List coupons
+    Route::post('/', [CouponController::class, 'store']); // Create coupon
+    Route::get('/{coupon}', [CouponController::class, 'show']); // Get single coupon
+    Route::put('/{coupon}', [CouponController::class, 'update']); // Update coupon
+    Route::delete('/{coupon}', [CouponController::class, 'destroy']); // Delete coupon
+
 });
 

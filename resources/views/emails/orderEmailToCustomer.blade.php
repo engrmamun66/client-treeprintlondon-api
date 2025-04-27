@@ -110,7 +110,7 @@
 <body>
 <div class="email-container">
     <div class="email-header">
-        <img src="https://res.cloudinary.com/dyfnpakfq/image/upload/v1737653056/NnZbENb4_pgjaw2.jpg" alt="Tee Print London Logo" style="border-radius: 8px;">
+        <img src="{{ asset('images/logo.jpg') }}" alt="Tee Print London Logo" style="border-radius: 8px;">
         <h2 style="margin-bottom: 0; color: #000;">New Order Received</h2>
     </div>
 

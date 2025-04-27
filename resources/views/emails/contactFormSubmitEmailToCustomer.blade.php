@@ -86,7 +86,7 @@
 <body>
 <div class="email-container">
     <div class="email-header">
-        <img src="{{ asset('https://res.cloudinary.com/dyfnpakfq/image/upload/v1737653056/NnZbENb4_pgjaw2.jpg') }}" alt="Tee Print Logo" style="border-radius: 15px;height: 150px; width: 150px;">
+        <img src="{{ asset('images/logo.jpg') }}" alt="Tee Print Logo" style="border-radius: 15px;height: 150px; width: 150px;">
     </div>
 
     <div class="email-content">
