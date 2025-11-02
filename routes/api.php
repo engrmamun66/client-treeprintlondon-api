@@ -14,7 +14,7 @@ use App\Http\Controllers\API\TypeController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\HomeController;
-
+use App\Http\Controllers\API\PostController;
 
 //public
 Route::group([
@@ -36,6 +36,11 @@ Route::group([
     Route::get('/search-products', [ProductController::class, 'search']);
     Route::post('/send-contact-us-email', [HomeController::class, 'submitContactForm']);
     Route::get('/dashboard-data', [HomeController::class, 'dashBoardData']);
+
+
+     // Public Post Routes
+    Route::get('/posts/published/list', [PostController::class, 'publishedPosts']);
+    Route::get('/posts/slug/{slug}', [PostController::class, 'showBySlug']);
     
     
     
@@ -104,6 +109,19 @@ Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->na
 Route::get('/payment-cancel', [PaymentController::class, 'paymentCancel'])->name('paypal.cancel');
 //private
 
+
+// Post Routes (Protected - Admin Only) - Using Resource Route
+Route::group([
+    'middleware' => ['api', 'auth:api'],
+    'prefix' => 'posts'
+], function () {
+    Route::get('/', [PostController::class, 'index']); // Get all categories
+    Route::post('/', [PostController::class, 'store']); // Create a new category
+    Route::get('/{post}', [PostController::class, 'show']); // Get a specific category
+    Route::put('/{post}', [PostController::class, 'update']); // Update a specific category
+    Route::delete('/{post}', [PostController::class, 'destroy']); // Delete a specific category
+    // Route::post('/{post}/status', [PostController::class, 'updateStatus']); 
+});
 
 Route::group([
     'middleware' => ['api', 'auth:api'],
