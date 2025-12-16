@@ -6,14 +6,33 @@ use App\Http\Requests\CreateOrderRequest;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Coupon;
+use App\Models\OrderCoupon;
 use App\Models\DeliveryType;
 use Illuminate\Support\Facades\DB;
 use Mail;
-use App\Mail\OrderEmailToAdmin; 
+use App\Mail\OrderEmailToAdmin;
 use App\Mail\OrderEmailToCustomer;
 use Illuminate\Support\Facades\Validator;
+
 class OrderController extends BaseController
 {
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         // Get the 'perPage' parameter from the request, default to 10
+    //         $perPage  = $request->per_page ?? 15;
+    //         // Fetch paginated categories
+    //         $orders = Order::latest()->paginate($perPage);
+    //         // Return paginated response
+    //         return $this->sendResponse($orders, 'Order list retrieved successfully.');
+
+    //     } catch (Exception $e) {
+    //         return $this->sendError($e, ["Line- ".$e->getLine().' '.$e->getMessage()], 500);
+    //     }
+    // }
+    
+    
     public function index(Request $request)
     {
         try {
@@ -64,7 +83,7 @@ class OrderController extends BaseController
     {
         try {
             // Fetch the order with order items and product details
-            $order = Order::with(['deliveryType','orderItems.product' => function ($query) {
+            $order = Order::with(['deliveryType', 'orderCoupon.coupon', 'orderItems.product' => function ($query) {
                 $query->with(['brand', 'category', 'images', 'colors', 'sizes', 'genders']);
             }])->where('order_number', $order_number)->first();
     
@@ -96,6 +115,26 @@ class OrderController extends BaseController
             if ($request->delivery_type_id) {
                 $deliveryType = DeliveryType::find($request->delivery_type_id);
             }
+            
+            
+            // Initialize coupon variables
+            $coupon = null;
+            $discountAmount = 0;
+            $originalTotal = 0;
+            
+
+            // Validate and apply coupon if provided
+            if ($request->coupon_code) {
+                 
+                $coupon = Coupon::where('code', $request->coupon_code)->first();
+        
+                if (!$coupon || !$coupon->isValidForEmail($request->customer_email)) {
+                    return $this->sendError('Invalid or expired coupon code', [], 400);
+                }
+            }
+            
+          
+              
 
             // Create the order with initial values
             $order = Order::create([
@@ -119,11 +158,12 @@ class OrderController extends BaseController
                 'notes' => $request->notes,
             ]);
             
-            
+             
 
             // Calculate subtotal and total
             $subtotal = 0;
             $orderItems = [];
+         
 
             // Create order items
             foreach ($request->items as $item) {
@@ -152,23 +192,45 @@ class OrderController extends BaseController
 
             // Insert order items
             OrderItem::insert($orderItems);
+           
             
 
-            // Calculate total
-            $total = round($subtotal + $order->tax + $order->shipping_cost, 2); // Round total to 2 decimal places
+             // Calculate totals
+            $originalTotal = round($subtotal + $order->tax + $order->shipping_cost, 2);
 
-            // Update order subtotal and total
+             
+            
+            // Apply coupon discount if valid
+            if ($coupon) {
+                $discountAmount = round($subtotal * ($coupon->discount_value / 100), 2);
+
+                $discountAmount = min($discountAmount, $subtotal);
+                
+                // Record coupon usage
+                OrderCoupon::create([
+                    'coupon_id' => $coupon->id,
+                    'order_id' => $order->id,
+                    'customer_email' => $order->customer_email,
+                    'used_at' => now()
+                ]);
+
+            }
+           
+
+            // Update order with final amounts
             $order->update([
-                'subtotal' => round($subtotal, 2), // Round subtotal to 2 decimal places
-                'total' => $total,
+                'subtotal' => round($subtotal, 2),
+                'original_total' => $originalTotal,
+                'discount_amount' => $discountAmount,
+                'total' => round($originalTotal - $discountAmount, 2),
             ]);
+             
            
             // Commit the transaction
             DB::commit();
               
             Mail::to('support@teeprintlondon.co.uk')->send(new OrderEmailToAdmin($order));
             Mail::to($order->customer_email)->send(new OrderEmailToCustomer($order));
-
 
             // Return success response
             return $this->sendResponse($order, 'Order created successfully.');
@@ -179,7 +241,8 @@ class OrderController extends BaseController
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
-
+    
+    
     public function updateOrderStatus(Request $request)
     {
         try {
@@ -207,9 +270,9 @@ class OrderController extends BaseController
             return $this->sendError($e, ["Line- " . $e->getLine() . ' ' . $e->getMessage()], 500);
         }
     }
-
-
-    public function destroy($id)
+    
+    
+     public function destroy($id)
     {
         DB::beginTransaction();
 
