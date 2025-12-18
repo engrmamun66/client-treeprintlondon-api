@@ -24,14 +24,14 @@ class PostRequest extends FormRequest
      */
     public function rules(): array
     {
-        $productId = $this->route('post') ? $this->route('post')->id : null;
+        $postId = $this->route('post') ? $this->route('post')->id : null;
 
         return [
             'title' => [
                 'required',
                 'string',
                 'max:255',
-                'unique:posts,title,' . ($postId ?? 'NULL') . ',id',
+                Rule::unique('posts', 'title')->ignore($postId),
             ],
             'content' => 'required|string|min:10',
             'excerpt' => 'nullable|string|max:500',

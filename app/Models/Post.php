@@ -54,12 +54,13 @@ class Post extends Model
         if ($this->meta_image) {
             return $this->meta_image ? asset('storage/' . $this->meta_image) : null;
         }
-         
-        
-        if ($this->featured_image) {
-            return $this->featured_image ? asset('storage/' . $this->featured_image) : null;
-        }
-        
         return null;
+    }
+    protected $appends = ['image_url'];
+    public function getImageUrlAttribute()
+    {
+        return $this->featured_image 
+            ? asset('storage/' . $this->featured_image)
+            : null;
     }
 }
