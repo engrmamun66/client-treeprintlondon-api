@@ -19,7 +19,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'Admin User',
                 'email' => 'admin@teeprintlondon.com',
                 'email_verified_at' => now(),
-                'password' => Hash::make('password'), // Hash the password
+                'password' => Hash::make('St1rl1ng@2019&'), // Hash the password
                 'remember_token' => \Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),
