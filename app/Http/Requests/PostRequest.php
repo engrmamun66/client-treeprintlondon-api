@@ -40,9 +40,9 @@ class PostRequest extends FormRequest
             'published_at' => 'nullable|date|after_or_equal:now',
             
             // SEO Meta fields
-            'meta_title' => 'nullable|string|max:60',
-            'meta_description' => 'nullable|string|max:160',
-            'meta_keywords' => 'nullable|string|max:255',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:10000',
+            'meta_keywords' => 'nullable|string|max:555',
             'meta_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10000',
             'canonical_url' => 'nullable|url|max:500',
         ];
